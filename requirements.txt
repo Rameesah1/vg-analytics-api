@@ -23,13 +23,13 @@ slowapi==0.1.9
 strawberry-graphql[fastapi]==0.243.0
 
 # MCP server
-mcp==1.0.0
+mcp>=1.0.0
 
-# Data processing (seed scripts)
+# Data processing
 pandas==2.2.3
 python-dotenv==1.0.1
 
-# String matching (fuzzy join — replaces string-similarity)
+# Fuzzy matching
 rapidfuzz==3.10.0
 
 # Testing
