@@ -13,10 +13,10 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print("🎮 Video Game Analytics API starting up...")
-    print("📚 Swagger docs at http://localhost:8000/api/docs")
+    print(" Video Game Analytics API starting up...")
+    print(" Swagger docs at http://localhost:8000/api/docs")
     yield
-    print("🎮 shutting down...")
+    print(" shutting down...")
 
 
 app = FastAPI(
