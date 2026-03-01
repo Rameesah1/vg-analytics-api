@@ -1,11 +1,11 @@
 from contextlib import asynccontextmanager
-from fastapi import FastAPI, Request
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 
+from src.auth.router import router as auth_router
 
 # 60 requests per minute per IP — mirrors ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }])
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
@@ -13,8 +13,8 @@ limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    print(" Video Game Analytics API starting up...")
-    print(" Swagger docs at http://localhost:8000/api/docs")
+    print("Video Game Analytics API starting up...")
+    print("Swagger docs at http://localhost:8000/api/docs")
     yield
     print(" shutting down...")
 
@@ -32,13 +32,9 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# attach rate limiter to app state so slowapi can find it
 app.state.limiter = limiter
-
-# return 429 with a clear message when rate limit is exceeded
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
-# open CORS for development — tighten in production
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -47,8 +43,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# routers
+app.include_router(auth_router)
+
 
 @app.get("/api/health", tags=["health"])
-@limiter.exempt  # health checks shouldn't count against the rate limit
+@limiter.exempt
 def health():
     return {"status": "ok"}

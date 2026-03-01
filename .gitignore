@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.py[cod]
+*$py.class
+
+# Virtual environment — never commit this
+venv/
+env/
+.venv
+
+# Environment variables — never commit this
+.env
+.env.local
+.env.development
+.env.production
+
+# Distribution
+dist/
+build/
+*.egg-info/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea/
+*.sublime-workspace
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data files (large CSVs — do not commit)
+data_comp3011/
+
+# Logs
+*.log
+
+# Alembic — keep migrations but ignore cache
+alembic/versions/__pycache__/
