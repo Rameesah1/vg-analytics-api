@@ -7,6 +7,8 @@ from slowapi.errors import RateLimitExceeded
 
 from src.auth.router import router as auth_router
 from src.games.router import router as games_router
+from src.developers.router import router as developers_router
+
 # 60 requests per minute per IP — mirrors ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }])
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
@@ -46,7 +48,7 @@ app.add_middleware(
 # routers
 app.include_router(auth_router)
 app.include_router(games_router)
-
+app.include_router(developers_router)
 
 @app.get("/api/health", tags=["health"])
 @limiter.exempt
