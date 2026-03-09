@@ -11,6 +11,7 @@ from src.developers.router import router as developers_router
 from src.insights.router import router as analytics_router
 from src.squads.router import router as squads_router
 from src.battles.router import router as battles_router
+from src.graphql.router import router as graphql_router
 
 # 60 requests per minute per IP — mirrors ThrottlerModule.forRoot([{ ttl: 60000, limit: 60 }])
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
@@ -55,6 +56,7 @@ app.include_router(developers_router)
 app.include_router(analytics_router)
 app.include_router(squads_router) 
 app.include_router(battles_router)
+app.include_router(graphql_router)
 
 @app.get("/api/health", tags=["health"])
 @limiter.exempt
