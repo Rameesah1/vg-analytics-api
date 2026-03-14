@@ -39,7 +39,7 @@ def test_commercial_hit():
 
 
 def test_divisive():
-    v = make_verdict(85, 4.5, 1.0)
+    v = make_verdict(75, 4.5, 1.0)
     assert v["verdict"] == "Divisive"
 
 

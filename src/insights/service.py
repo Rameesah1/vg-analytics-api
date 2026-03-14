@@ -1,18 +1,69 @@
+import json
+import hashlib
 from sqlalchemy.orm import Session
 from sqlalchemy import func, desc, asc, text, and_
 from fastapi import HTTPException, status
 from src.db.models import GameRelease, Game, Platform
 from src.insights.schemas import LeaderboardQuerySchema, DecadeQuerySchema
 
+# try to import redis , if it's not running we fall back to no cache gracefully
+try:
+    import redis
+    _redis = redis.Redis(host='localhost', port=6379, db=0, decode_responses=True)
+    _redis.ping()
+    CACHE_AVAILABLE = True
+except Exception:
+    _redis = None
+    CACHE_AVAILABLE = False
+
+# cache TTL in seconds - analytics data doesn't change often so 5 minutes is fine
+CACHE_TTL = 300
+
+
+def _cache_get(key: str):
+    if not CACHE_AVAILABLE:
+        return None
+    try:
+        val = _redis.get(key)
+        return json.loads(val) if val else None
+    except Exception:
+        return None
+
+
+def _cache_set(key: str, value: dict):
+    if not CACHE_AVAILABLE:
+        return
+    try:
+        _redis.setex(key, CACHE_TTL, json.dumps(value))
+    except Exception:
+        pass
+
+
+def _make_cache_key(prefix: str, **kwargs) -> str:
+    # build a deterministic cache key from the query params
+    content = json.dumps(kwargs, sort_keys=True)
+    digest = hashlib.md5(content.encode()).hexdigest()[:8]
+    return f"vg:{prefix}:{digest}"
+
 
 class AnalyticsService:
     def __init__(self, db: Session):
         self.db = db
 
-    # --- LEADERBOARD ---
+    # Leaderboard
 
     def get_leaderboard(self, query: LeaderboardQuerySchema):
-        # map the metric param to the actual column
+        # cache leaderboard results -- same filters always return same data
+        cache_key = _make_cache_key("leaderboard",
+            metric=query.metric, genre=query.genre,
+            platform=query.platform, year_from=query.year_from,
+            year_to=query.year_to, limit=query.limit)
+
+        cached = _cache_get(cache_key)
+        if cached:
+            return {**cached, "cached": True}
+
+        # map the metric param to the actual db column
         metric_map = {
             "meta_score": GameRelease.meta_score,
             "user_review": GameRelease.user_review,
@@ -44,7 +95,7 @@ class AnalyticsService:
             .all()
         )
 
-        return {
+        result = {
             "metric": query.metric,
             "filters": {
                 "genre": query.genre,
@@ -53,11 +104,21 @@ class AnalyticsService:
                 "year_to": query.year_to,
             },
             "leaders": [self._game_row_to_dict(r) for r in rows],
+            "cached": False,
         }
 
-    # --- VERDICT MACHINE (signature feature) ---
+        _cache_set(cache_key, result)
+        return result
+
+    # classification verdict
 
     def get_verdict(self, game_release_id: str):
+        # verdict is deterministic per game so we can cache it indefinitely
+        cache_key = f"vg:verdict:{game_release_id}"
+        cached = _cache_get(cache_key)
+        if cached:
+            return {**cached, "cached": True}
+
         row = (
             self.db.query(
                 GameRelease.id,
@@ -83,17 +144,27 @@ class AnalyticsService:
             float(row.total_sales) if row.total_sales else None,
         )
 
-        return {**self._game_row_to_dict(row), **verdict}
+        result = {**self._game_row_to_dict(row), **verdict, "cached": False}
+        _cache_set(cache_key, result)
+        return result
 
     def _compute_verdict(self, meta_score, user_review, total_sales):
-        # scale everything to 0-100 for fair comparison
+        # scale everything to 0-100 for fair comparison across three dimensions
         critic = meta_score or 0
         user = (user_review or 0) * 10
-        # log-normalise sales -- cap at 20M = 100, prevents blockbusters dominating
+        # log normalise sales - cap at 20M = 100, prevents blockbusters dominating
         sales = min((total_sales or 0) / 20 * 100, 100)
         has_sales = total_sales is not None and total_sales > 0
         has_data = meta_score is not None and user_review is not None
         divergence = abs(critic - user)
+
+        # confidence tells the consumer how much to trust this verdict
+        if has_data and has_sales:
+            confidence = "high"
+        elif has_data:
+            confidence = "medium"
+        else:
+            confidence = "low"
 
         if not has_data:
             classification = "Unrated"
@@ -129,6 +200,7 @@ class AnalyticsService:
         return {
             "verdict": classification,
             "explanation": explanation,
+            "confidence": confidence,
             "scores": {
                 "critic": critic,
                 "user": user,
@@ -137,10 +209,18 @@ class AnalyticsService:
             },
         }
 
-    # --- CONTROVERSY INDEX ---
+    # controversy and hidden gems
 
     def get_controversy(self, query: LeaderboardQuerySchema):
         # games where the gap between critic score and user score is largest
+        cache_key = _make_cache_key("controversy",
+            platform=query.platform, year_from=query.year_from,
+            year_to=query.year_to, limit=query.limit)
+
+        cached = _cache_get(cache_key)
+        if cached:
+            return {**cached, "cached": True}
+
         conditions = [
             GameRelease.meta_score.isnot(None),
             GameRelease.user_review.isnot(None),
@@ -169,7 +249,7 @@ class AnalyticsService:
             .all()
         )
 
-        return {
+        result = {
             "description": "Games where critics and users most disagreed",
             "results": [
                 {
@@ -183,19 +263,29 @@ class AnalyticsService:
                 }
                 for r in rows
             ],
+            "cached": False,
         }
 
-    # --- HIDDEN GEMS ---
+        _cache_set(cache_key, result)
+        return result
 
     def get_hidden_gems(self, query: LeaderboardQuerySchema):
         # high user score + low commercial visibility = hidden gem
+        cache_key = _make_cache_key("gems",
+            platform=query.platform, year_from=query.year_from,
+            year_to=query.year_to, limit=query.limit)
+
+        cached = _cache_get(cache_key)
+        if cached:
+            return {**cached, "cached": True}
+
         conditions = [
             GameRelease.user_review.isnot(None),
             GameRelease.user_review >= 8.0,
         ]
         conditions = self._apply_filters(conditions, query.platform, query.year_from, query.year_to)
 
-        # penalise for sales -- the less it sold, the more "hidden" it is
+        # penalise for sales- the less it sold, the more "hidden" it is
         gem_score = (
             GameRelease.user_review * 10
             - func.coalesce(GameRelease.total_sales, 0) * 2
@@ -220,7 +310,7 @@ class AnalyticsService:
             .all()
         )
 
-        return {
+        result = {
             "description": "High user scores but overlooked commercially",
             "results": [
                 {
@@ -235,11 +325,21 @@ class AnalyticsService:
                 }
                 for r in rows
             ],
+            "cached": False,
         }
 
-    # --- DECADE TRENDS ---
+        _cache_set(cache_key, result)
+        return result
+
+    # Decade trends
 
     def get_decade_trends(self, query: DecadeQuerySchema):
+        # decade trends are expensive group by on 63k rows  cache aggressively
+        cache_key = _make_cache_key("decade", decade=query.decade, genre=query.genre)
+        cached = _cache_get(cache_key)
+        if cached:
+            return {**cached, "cached": True}
+
         decade_expr = func.floor(GameRelease.release_year / 10) * 10
 
         conditions = []
@@ -268,7 +368,7 @@ class AnalyticsService:
 
         rows = base.all()
 
-        return {
+        result = {
             "description": "Gaming trends by decade",
             "decades": [
                 {
@@ -280,11 +380,21 @@ class AnalyticsService:
                 }
                 for r in rows
             ],
+            "cached": False,
         }
 
-    # --- PLATFORM DOMINANCE ---
+        _cache_set(cache_key, result)
+        return result
+
+    # platform dominance
 
     def get_platform_dominance(self, query: DecadeQuerySchema):
+        # same as decade trends -- group by on large table, cache it
+        cache_key = _make_cache_key("platform_dom", decade=query.decade)
+        cached = _cache_get(cache_key)
+        if cached:
+            return {**cached, "cached": True}
+
         decade_expr = func.floor(GameRelease.release_year / 10) * 10
 
         conditions = [GameRelease.release_year.isnot(None)]
@@ -307,7 +417,7 @@ class AnalyticsService:
             .all()
         )
 
-        return {
+        result = {
             "description": "Platform dominance by decade",
             "platforms": [
                 {
@@ -319,9 +429,13 @@ class AnalyticsService:
                 }
                 for r in rows
             ],
+            "cached": False,
         }
 
-    # --- SHARED HELPERS ---
+        _cache_set(cache_key, result)
+        return result
+
+    # shared helpers
 
     def _apply_filters(self, conditions, platform, year_from, year_to):
         if platform:
@@ -333,7 +447,7 @@ class AnalyticsService:
         return conditions
 
     def _genre_subquery(self, genre: str):
-        # genre is many-to-many so needs a subquery
+        # genre is many-to-many so needs a subquery rather than a simple join
         return text(f"""
             EXISTS (
                 SELECT 1 FROM game_release_genre grg

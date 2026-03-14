@@ -37,7 +37,6 @@
     overflow-x: hidden;
   }
 
-  /* noise texture overlay */
   body::before {
     content: '';
     position: fixed;
@@ -48,7 +47,6 @@
     opacity: 0.4;
   }
 
-  /* NAV */
   nav {
     position: sticky;
     top: 0;
@@ -110,24 +108,27 @@
     transition: all 0.2s;
     border: none;
     background: none;
+    position: relative;
   }
 
-  .nav-tab.active {
-    background: var(--accent);
-    color: white;
+  .nav-tab.active { background: var(--accent); color: white; }
+  .nav-tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
+
+  .nav-tab.ai-tab::after {
+    content: 'AI';
+    position: absolute;
+    top: -5px;
+    right: -3px;
+    background: var(--teal);
+    color: #000;
+    font-size: 0.48rem;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
   }
 
-  .nav-tab:hover:not(.active) {
-    color: var(--text);
-    background: var(--surface2);
-  }
-
-  /* AUTH */
-  .auth-bar {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+  .auth-bar { display: flex; align-items: center; gap: 8px; }
 
   .auth-bar input {
     background: var(--surface);
@@ -160,31 +161,15 @@
   }
 
   .btn:hover { background: var(--surface2); border-color: var(--accent); color: var(--accent2); }
-
-  .btn-accent {
-    background: var(--accent);
-    border-color: var(--accent);
-    color: white;
-  }
-
+  .btn-accent { background: var(--accent); border-color: var(--accent); color: white; }
   .btn-accent:hover { background: var(--accent2); border-color: var(--accent2); color: white; }
 
-  .auth-status {
-    font-size: 0.75rem;
-    color: var(--teal);
-    font-family: var(--font-mono);
-  }
+  .auth-status { font-size: 0.75rem; color: var(--teal); font-family: var(--font-mono); }
 
-  /* SECTIONS */
   section { display: none; padding: 2rem; max-width: 1200px; margin: 0 auto; }
   section.active { display: block; }
 
-  /* HERO */
-  .hero {
-    text-align: center;
-    padding: 4rem 2rem 2rem;
-    position: relative;
-  }
+  .hero { text-align: center; padding: 4rem 2rem 2rem; position: relative; }
 
   .hero-eyebrow {
     font-family: var(--font-mono);
@@ -208,25 +193,10 @@
     background-clip: text;
   }
 
-  .hero-sub {
-    font-size: 1rem;
-    color: var(--muted);
-    max-width: 480px;
-    margin: 0 auto 2rem;
-    line-height: 1.6;
-  }
+  .hero-sub { font-size: 1rem; color: var(--muted); max-width: 480px; margin: 0 auto 2rem; line-height: 1.6; }
 
-  /* VERDICT SEARCH */
-  .verdict-search-wrap {
-    max-width: 600px;
-    margin: 0 auto;
-    position: relative;
-  }
-
-  .verdict-input-row {
-    display: flex;
-    gap: 8px;
-  }
+  .verdict-search-wrap { max-width: 600px; margin: 0 auto; position: relative; }
+  .verdict-input-row { display: flex; gap: 8px; }
 
   .verdict-input-row input {
     flex: 1;
@@ -241,11 +211,7 @@
     transition: border-color 0.2s, box-shadow 0.2s;
   }
 
-  .verdict-input-row input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(124,106,247,0.15);
-  }
-
+  .verdict-input-row input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,106,247,0.15); }
   .verdict-input-row input::placeholder { color: var(--muted); }
 
   .verdict-input-row button {
@@ -264,12 +230,10 @@
 
   .verdict-input-row button:hover { background: var(--accent2); transform: translateY(-1px); }
 
-  /* SEARCH RESULTS DROPDOWN */
   .search-results {
     position: absolute;
     top: calc(100% + 8px);
-    left: 0;
-    right: 0;
+    left: 0; right: 0;
     background: var(--surface);
     border: 1px solid var(--border2);
     border-radius: 10px;
@@ -292,20 +256,9 @@
 
   .search-result-item:last-child { border-bottom: none; }
   .search-result-item:hover { background: var(--surface2); }
+  .result-title { font-size: 0.9rem; font-weight: 500; color: var(--text); }
+  .result-meta { font-size: 0.75rem; color: var(--muted); font-family: var(--font-mono); }
 
-  .result-title {
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--text);
-  }
-
-  .result-meta {
-    font-size: 0.75rem;
-    color: var(--muted);
-    font-family: var(--font-mono);
-  }
-
-  /* VERDICT CARD */
   .verdict-card {
     max-width: 600px;
     margin: 2rem auto 0;
@@ -324,13 +277,7 @@
     to { opacity: 1; transform: translateY(0); }
   }
 
-  .verdict-header {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    margin-bottom: 1.5rem;
-    gap: 1rem;
-  }
+  .verdict-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 1.5rem; gap: 1rem; }
 
   .verdict-game-info h2 {
     font-family: var(--font-display);
@@ -340,11 +287,7 @@
     margin-bottom: 4px;
   }
 
-  .verdict-game-info p {
-    font-size: 0.8rem;
-    color: var(--muted);
-    font-family: var(--font-mono);
-  }
+  .verdict-game-info p { font-size: 0.8rem; color: var(--muted); font-family: var(--font-mono); }
 
   .verdict-badge {
     padding: 8px 16px;
@@ -357,21 +300,9 @@
     text-align: center;
   }
 
-  .verdict-explanation {
-    font-size: 0.9rem;
-    color: var(--muted);
-    line-height: 1.6;
-    margin-bottom: 1.5rem;
-    font-style: italic;
-  }
-
+  .verdict-explanation { font-size: 0.9rem; color: var(--muted); line-height: 1.6; margin-bottom: 1.5rem; font-style: italic; }
   .score-bars { display: flex; flex-direction: column; gap: 12px; }
-
-  .score-bar-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+  .score-bar-row { display: flex; align-items: center; gap: 12px; }
 
   .score-bar-label {
     font-family: var(--font-mono);
@@ -383,13 +314,7 @@
     flex-shrink: 0;
   }
 
-  .score-bar-track {
-    flex: 1;
-    height: 8px;
-    background: var(--surface2);
-    border-radius: 4px;
-    overflow: hidden;
-  }
+  .score-bar-track { flex: 1; height: 8px; background: var(--surface2); border-radius: 4px; overflow: hidden; }
 
   .score-bar-fill {
     height: 100%;
@@ -398,14 +323,7 @@
     transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .score-bar-value {
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
-    font-weight: 500;
-    width: 36px;
-    text-align: right;
-    flex-shrink: 0;
-  }
+  .score-bar-value { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 500; width: 36px; text-align: right; flex-shrink: 0; }
 
   .confidence-pill {
     display: inline-flex;
@@ -419,13 +337,8 @@
     border: 1px solid var(--border);
   }
 
-  .confidence-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-  }
+  .confidence-dot { width: 6px; height: 6px; border-radius: 50%; }
 
-  /* GRAPHQL QUERY DISPLAY */
   .gql-query {
     margin-top: 1rem;
     background: var(--bg);
@@ -443,69 +356,18 @@
   .gql-query .gql-keyword { color: var(--accent2); }
   .gql-query .gql-field { color: var(--teal); }
   .gql-query .gql-arg { color: var(--gold); }
-  .gql-label {
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--accent);
-    margin-bottom: 6px;
-  }
+  .gql-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 6px; }
 
-  /* STATS GRID */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 12px;
-    margin-bottom: 2rem;
-  }
+  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 2rem; }
 
-  .stat-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem;
-    transition: border-color 0.2s;
-  }
-
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.25rem; transition: border-color 0.2s; }
   .stat-card:hover { border-color: var(--border2); }
+  .stat-label { font-size: 0.72rem; font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
+  .stat-value { font-family: var(--font-display); font-size: 1.8rem; font-weight: 800; letter-spacing: -0.03em; color: var(--text); }
+  .stat-sub { font-size: 0.72rem; color: var(--muted); margin-top: 4px; }
 
-  .stat-label {
-    font-size: 0.72rem;
-    font-family: var(--font-mono);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-
-  .stat-value {
-    font-family: var(--font-display);
-    font-size: 1.8rem;
-    font-weight: 800;
-    letter-spacing: -0.03em;
-    color: var(--text);
-  }
-
-  .stat-sub {
-    font-size: 0.72rem;
-    color: var(--muted);
-    margin-top: 4px;
-  }
-
-  /* SECTION HEADERS */
-  .section-header {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    margin-bottom: 1.5rem;
-  }
-
-  .section-title {
-    font-family: var(--font-display);
-    font-size: 1.3rem;
-    font-weight: 700;
-    letter-spacing: -0.02em;
-  }
+  .section-header { display: flex; align-items: baseline; gap: 12px; margin-bottom: 1.5rem; }
+  .section-title { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; letter-spacing: -0.02em; }
 
   .section-tag {
     font-family: var(--font-mono);
@@ -519,55 +381,18 @@
     border: 1px solid rgba(124,106,247,0.2);
   }
 
-  /* CHART CONTAINERS */
-  .chart-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 2rem;
-  }
-
+  .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2rem; }
   @media (max-width: 768px) { .chart-grid { grid-template-columns: 1fr; } }
 
-  .chart-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.5rem;
-  }
-
-  .chart-title {
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    font-weight: 600;
-    margin-bottom: 4px;
-    letter-spacing: -0.01em;
-  }
-
-  .chart-subtitle {
-    font-size: 0.75rem;
-    color: var(--muted);
-    margin-bottom: 1.25rem;
-  }
-
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+  .chart-title { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; letter-spacing: -0.01em; }
+  .chart-subtitle { font-size: 0.75rem; color: var(--muted); margin-bottom: 1.25rem; }
   .chart-wrap { position: relative; height: 220px; }
 
-  /* CONTROVERSY LIST */
-  .controversy-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 2rem;
-  }
-
+  .controversy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 2rem; }
   @media (max-width: 768px) { .controversy-grid { grid-template-columns: 1fr; } }
 
-  .list-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    overflow: hidden;
-  }
+  .list-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
 
   .list-card-header {
     padding: 1rem 1.25rem;
@@ -577,11 +402,7 @@
     justify-content: space-between;
   }
 
-  .list-card-title {
-    font-family: var(--font-display);
-    font-size: 0.9rem;
-    font-weight: 600;
-  }
+  .list-card-title { font-family: var(--font-display); font-size: 0.9rem; font-weight: 600; }
 
   .list-item {
     padding: 10px 1.25rem;
@@ -595,46 +416,13 @@
 
   .list-item:last-child { border-bottom: none; }
   .list-item:hover { background: var(--surface2); }
-
-  .list-rank {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    color: var(--muted);
-    width: 20px;
-    flex-shrink: 0;
-  }
-
+  .list-rank { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted); width: 20px; flex-shrink: 0; }
   .list-info { flex: 1; min-width: 0; }
+  .list-title { font-size: 0.85rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .list-meta { font-size: 0.72rem; color: var(--muted); font-family: var(--font-mono); margin-top: 2px; }
+  .list-score { font-family: var(--font-mono); font-size: 0.8rem; font-weight: 500; flex-shrink: 0; }
 
-  .list-title {
-    font-size: 0.85rem;
-    font-weight: 500;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-
-  .list-meta {
-    font-size: 0.72rem;
-    color: var(--muted);
-    font-family: var(--font-mono);
-    margin-top: 2px;
-  }
-
-  .list-score {
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    font-weight: 500;
-    flex-shrink: 0;
-  }
-
-  /* GAMES TAB */
-  .games-controls {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 1.5rem;
-    flex-wrap: wrap;
-  }
+  .games-controls { display: flex; gap: 8px; margin-bottom: 1.5rem; flex-wrap: wrap; }
 
   .games-controls input, .games-controls select {
     background: var(--surface);
@@ -652,11 +440,7 @@
   .games-controls input::placeholder { color: var(--muted); }
   .games-controls select option { background: var(--surface); }
 
-  .games-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 12px;
-  }
+  .games-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
 
   .game-card {
     background: var(--surface);
@@ -682,50 +466,16 @@
 
   .game-card:hover { border-color: var(--border2); transform: translateY(-2px); }
   .game-card:hover::before { transform: scaleX(1); }
+  .game-card-title { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; letter-spacing: -0.01em; line-height: 1.3; }
+  .game-card-meta { font-size: 0.72rem; color: var(--muted); font-family: var(--font-mono); margin-bottom: 12px; }
+  .game-card-scores { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 10px; }
 
-  .game-card-title {
-    font-family: var(--font-display);
-    font-size: 0.95rem;
-    font-weight: 600;
-    margin-bottom: 6px;
-    letter-spacing: -0.01em;
-    line-height: 1.3;
-  }
-
-  .game-card-meta {
-    font-size: 0.72rem;
-    color: var(--muted);
-    font-family: var(--font-mono);
-    margin-bottom: 12px;
-  }
-
-  .game-card-scores {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 10px;
-  }
-
-  .score-chip {
-    font-family: var(--font-mono);
-    font-size: 0.7rem;
-    padding: 3px 8px;
-    border-radius: 4px;
-    background: var(--surface2);
-    color: var(--text);
-  }
-
+  .score-chip { font-family: var(--font-mono); font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; background: var(--surface2); color: var(--text); }
   .score-chip.meta { color: var(--teal); }
   .score-chip.user { color: var(--accent2); }
   .score-chip.sales { color: var(--gold); }
 
-  /* SQUADS TAB */
-  .squads-layout {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
+  .squads-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   @media (max-width: 768px) { .squads-layout { grid-template-columns: 1fr; } }
 
   .squad-list { display: flex; flex-direction: column; gap: 8px; }
@@ -742,27 +492,11 @@
     justify-content: space-between;
   }
 
-  .squad-item:hover, .squad-item.selected {
-    border-color: var(--accent);
-    background: rgba(124,106,247,0.05);
-  }
-
-  .squad-name {
-    font-family: var(--font-display);
-    font-size: 0.95rem;
-    font-weight: 600;
-  }
-
-  .squad-count {
-    font-family: var(--font-mono);
-    font-size: 0.72rem;
-    color: var(--muted);
-    margin-top: 2px;
-  }
-
+  .squad-item:hover, .squad-item.selected { border-color: var(--accent); background: rgba(124,106,247,0.05); }
+  .squad-name { font-family: var(--font-display); font-size: 0.95rem; font-weight: 600; }
+  .squad-count { font-family: var(--font-mono); font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
   .squad-arrow { color: var(--muted); font-size: 1rem; }
 
-  /* BATTLE RESULT */
   .battle-result {
     background: var(--surface);
     border: 1px solid var(--border2);
@@ -774,41 +508,11 @@
   }
 
   .battle-result.visible { display: block; }
-
-  .battle-vs {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .battle-squad-score {
-    text-align: center;
-    flex: 1;
-  }
-
-  .battle-squad-name {
-    font-family: var(--font-display);
-    font-size: 1rem;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  .battle-score {
-    font-family: var(--font-mono);
-    font-size: 2rem;
-    font-weight: 500;
-    color: var(--accent2);
-  }
-
-  .battle-vs-label {
-    font-family: var(--font-display);
-    font-size: 0.8rem;
-    font-weight: 800;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-  }
+  .battle-vs { display: flex; align-items: center; justify-content: center; gap: 1rem; margin-bottom: 1.5rem; }
+  .battle-squad-score { text-align: center; flex: 1; }
+  .battle-squad-name { font-family: var(--font-display); font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+  .battle-score { font-family: var(--font-mono); font-size: 2rem; font-weight: 500; color: var(--accent2); }
+  .battle-vs-label { font-family: var(--font-display); font-size: 0.8rem; font-weight: 800; color: var(--muted); letter-spacing: 0.1em; }
 
   .winner-banner {
     background: rgba(124,106,247,0.1);
@@ -822,17 +526,7 @@
     font-size: 0.9rem;
   }
 
-  /* LOADING */
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 3rem;
-    color: var(--muted);
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
-    gap: 10px;
-  }
+  .loading { display: flex; align-items: center; justify-content: center; padding: 3rem; color: var(--muted); font-family: var(--font-mono); font-size: 0.8rem; gap: 10px; }
 
   .spinner {
     width: 16px;
@@ -845,7 +539,6 @@
 
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  /* VERDICT COLOURS */
   .v-classic { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
   .v-cult { background: rgba(124,106,247,0.15); color: #a78bfa; border: 1px solid rgba(124,106,247,0.3); }
   .v-darling { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
@@ -857,19 +550,9 @@
   .v-solid { background: rgba(107,114,128,0.15); color: #9ca3af; border: 1px solid rgba(107,114,128,0.3); }
   .v-unrated { background: rgba(75,85,99,0.15); color: #6b7280; border: 1px solid rgba(75,85,99,0.3); }
 
-  .empty-state {
-    text-align: center;
-    padding: 3rem;
-    color: var(--muted);
-    font-size: 0.85rem;
-  }
+  .empty-state { text-align: center; padding: 3rem; color: var(--muted); font-size: 0.85rem; }
 
-  .preset-selector {
-    display: flex;
-    gap: 6px;
-    flex-wrap: wrap;
-    margin-bottom: 1rem;
-  }
+  .preset-selector { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; }
 
   .preset-btn {
     font-family: var(--font-mono);
@@ -885,29 +568,263 @@
     letter-spacing: 0.05em;
   }
 
-  .preset-btn.active, .preset-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent2);
-    background: rgba(124,106,247,0.1);
+  .preset-btn.active, .preset-btn:hover { border-color: var(--accent); color: var(--accent2); background: rgba(124,106,247,0.1); }
+
+  .login-notice { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; text-align: center; color: var(--muted); font-size: 0.9rem; }
+
+  .login-notice strong { display: block; font-family: var(--font-display); font-size: 1rem; color: var(--text); margin-bottom: 6px; }
+
+  /* ===== ASK AI ===== */
+  #tab-ask { padding: 1.5rem 2rem; max-width: 1200px; }
+
+  .ask-layout {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 16px;
+    height: calc(100vh - 120px);
+    min-height: 520px;
   }
 
-  .login-notice {
+  @media (max-width: 900px) { .ask-layout { grid-template-columns: 1fr; height: auto; } .ask-sidebar { display: none; } }
+
+  .ask-chat-panel {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 2rem;
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.9rem;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
 
-  .login-notice strong {
-    display: block;
-    font-family: var(--font-display);
-    font-size: 1rem;
-    color: var(--text);
-    margin-bottom: 6px;
+  .ask-chat-header {
+    padding: 0.9rem 1.25rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
   }
+
+  .ask-ai-icon {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--teal));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+
+  .ask-chat-title { font-family: var(--font-display); font-size: 0.9rem; font-weight: 700; }
+  .ask-chat-subtitle { font-size: 0.7rem; color: var(--muted); font-family: var(--font-mono); margin-left: auto; }
+
+  .ask-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    scroll-behavior: smooth;
+  }
+
+  .ask-messages::-webkit-scrollbar { width: 4px; }
+  .ask-messages::-webkit-scrollbar-track { background: transparent; }
+  .ask-messages::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .ask-welcome {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    text-align: center;
+    padding: 2rem 1rem;
+    gap: 10px;
+    color: var(--muted);
+    min-height: 200px;
+  }
+
+  .ask-welcome-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(124,106,247,0.15), rgba(20,184,166,0.15));
+    border: 1px solid rgba(124,106,247,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+
+  .ask-welcome h3 { font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: var(--text); }
+  .ask-welcome p { font-size: 0.82rem; line-height: 1.6; max-width: 340px; }
+
+  .ask-msg { display: flex; gap: 10px; animation: fadeUp 0.25s ease; }
+  .ask-msg.user { flex-direction: row-reverse; }
+
+  .ask-msg-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.62rem;
+    font-family: var(--font-mono);
+    font-weight: 500;
+    margin-top: 2px;
+  }
+
+  .ask-msg.user .ask-msg-avatar { background: var(--surface2); border: 1px solid var(--border2); color: var(--muted); }
+  .ask-msg.assistant .ask-msg-avatar { background: linear-gradient(135deg, var(--accent), var(--teal)); color: white; }
+
+  .ask-msg-bubble {
+    max-width: 78%;
+    padding: 9px 13px;
+    border-radius: 12px;
+    font-size: 0.875rem;
+    line-height: 1.65;
+  }
+
+  .ask-msg.user .ask-msg-bubble { background: var(--accent); color: white; border-radius: 12px 4px 12px 12px; }
+  .ask-msg.assistant .ask-msg-bubble { background: var(--surface2); border: 1px solid var(--border); color: var(--text); border-radius: 4px 12px 12px 12px; }
+
+  .ask-typing { display: flex; gap: 10px; align-items: flex-start; animation: fadeUp 0.25s ease; }
+
+  .ask-typing-dots {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 4px 12px 12px 12px;
+    padding: 11px 15px;
+    display: flex;
+    gap: 5px;
+    align-items: center;
+  }
+
+  .ask-typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: typingBounce 1.2s ease-in-out infinite;
+  }
+
+  .ask-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+  .ask-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  .ask-input-area {
+    padding: 0.9rem 1.25rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .ask-input {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border2);
+    border-radius: 10px;
+    padding: 9px 13px;
+    font-size: 0.875rem;
+    color: var(--text);
+    font-family: var(--font-body);
+    outline: none;
+    resize: none;
+    min-height: 40px;
+    max-height: 110px;
+    line-height: 1.5;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .ask-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(124,106,247,0.12); }
+  .ask-input::placeholder { color: var(--muted); }
+
+  .ask-send-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    flex-shrink: 0;
+    align-self: flex-end;
+  }
+
+  .ask-send-btn:hover:not(:disabled) { background: var(--accent2); transform: translateY(-1px); }
+  .ask-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+  .ask-send-btn svg { width: 15px; height: 15px; fill: white; }
+
+  .ask-sidebar { display: flex; flex-direction: column; gap: 12px; }
+
+  .ask-sidebar-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1rem 1.1rem; }
+
+  .ask-sidebar-title {
+    font-family: var(--font-display);
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 10px;
+  }
+
+  .ask-suggestion {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 10px;
+    font-size: 0.77rem;
+    color: var(--text);
+    font-family: var(--font-body);
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 6px;
+    line-height: 1.4;
+  }
+
+  .ask-suggestion:last-child { margin-bottom: 0; }
+  .ask-suggestion:hover { border-color: var(--accent); background: rgba(124,106,247,0.08); color: var(--accent2); }
+
+  .ask-tools-list { display: flex; flex-direction: column; gap: 7px; }
+
+  .ask-tool-item { display: flex; align-items: center; gap: 8px; font-size: 0.75rem; font-family: var(--font-mono); color: var(--muted); }
+
+  .ask-tool-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--teal); flex-shrink: 0; }
+
+  .ask-clear-btn {
+    width: 100%;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 7px 12px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .ask-clear-btn:hover { border-color: var(--coral); color: var(--coral); }
 </style>
 </head>
 <body>
@@ -918,10 +835,11 @@
     VG Analytics
   </div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showTab('verdict')">Verdict</button>
-    <button class="nav-tab" onclick="showTab('analytics')">Analytics</button>
-    <button class="nav-tab" onclick="showTab('games')">Games</button>
-    <button class="nav-tab" onclick="showTab('squads')">Squads</button>
+    <button class="nav-tab active" onclick="showTab('verdict', this)">Verdict</button>
+    <button class="nav-tab" onclick="showTab('analytics', this)">Analytics</button>
+    <button class="nav-tab" onclick="showTab('games', this)">Games</button>
+    <button class="nav-tab" onclick="showTab('squads', this)">Squads</button>
+    <button class="nav-tab ai-tab" onclick="showTab('ask', this)">Ask</button>
   </div>
   <div class="auth-bar" id="auth-bar">
     <input type="text" id="auth-username" placeholder="username">
@@ -986,30 +904,12 @@
     <span class="section-title">Industry Analytics</span>
     <span class="section-tag">Live data</span>
   </div>
-
   <div class="stats-grid" id="stats-grid">
-    <div class="stat-card">
-      <div class="stat-label">Total releases</div>
-      <div class="stat-value" id="stat-total">—</div>
-      <div class="stat-sub">in database</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">With full data</div>
-      <div class="stat-value" id="stat-full">—</div>
-      <div class="stat-sub">critic + sales + reviews</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Decades covered</div>
-      <div class="stat-value">5</div>
-      <div class="stat-sub">1980s through 2020s</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-label">Data sources</div>
-      <div class="stat-value">2</div>
-      <div class="stat-sub">VGChartz + Metacritic</div>
-    </div>
+    <div class="stat-card"><div class="stat-label">Total releases</div><div class="stat-value" id="stat-total">—</div><div class="stat-sub">in database</div></div>
+    <div class="stat-card"><div class="stat-label">With full data</div><div class="stat-value" id="stat-full">—</div><div class="stat-sub">critic + sales + reviews</div></div>
+    <div class="stat-card"><div class="stat-label">Decades covered</div><div class="stat-value">5</div><div class="stat-sub">1980s through 2020s</div></div>
+    <div class="stat-card"><div class="stat-label">Data sources</div><div class="stat-value">2</div><div class="stat-sub">VGChartz + Metacritic</div></div>
   </div>
-
   <div class="chart-grid">
     <div class="chart-card">
       <div class="chart-title">Decade trends</div>
@@ -1022,20 +922,13 @@
       <div class="chart-wrap"><canvas id="platform-chart"></canvas></div>
     </div>
   </div>
-
   <div class="controversy-grid">
     <div class="list-card">
-      <div class="list-card-header">
-        <span class="list-card-title">Controversy hall of fame</span>
-        <span class="section-tag">critics vs players</span>
-      </div>
+      <div class="list-card-header"><span class="list-card-title">Controversy hall of fame</span><span class="section-tag">critics vs players</span></div>
       <div id="controversy-list"><div class="loading"><div class="spinner"></div>Loading...</div></div>
     </div>
     <div class="list-card">
-      <div class="list-card-header">
-        <span class="list-card-title">Hidden gems</span>
-        <span class="section-tag">overlooked classics</span>
-      </div>
+      <div class="list-card-header"><span class="list-card-title">Hidden gems</span><span class="section-tag">overlooked classics</span></div>
       <div id="gems-list"><div class="loading"><div class="spinner"></div>Loading...</div></div>
     </div>
   </div>
@@ -1047,7 +940,6 @@
     <span class="section-title">Game Explorer</span>
     <span class="section-tag">63,575 releases</span>
   </div>
-
   <div class="games-controls">
     <input type="text" id="games-search" placeholder="Search title..." style="flex: 1; min-width: 180px;" oninput="debounceGames(this.value)">
     <input type="text" id="games-platform" placeholder="Platform e.g. PS4">
@@ -1060,7 +952,6 @@
     </select>
     <button class="btn btn-accent" onclick="loadGames()">Search</button>
   </div>
-
   <div id="games-grid" class="games-grid">
     <div class="loading" style="grid-column: 1/-1"><div class="spinner"></div>Loading games...</div>
   </div>
@@ -1072,12 +963,76 @@
     <span class="section-title">Squads & Battles</span>
     <span class="section-tag">requires login</span>
   </div>
-
   <div id="squads-content">
     <div class="login-notice">
       <strong>Login to access Squads & Battles</strong>
       Enter your credentials in the top right to get started.
     </div>
+  </div>
+</section>
+
+<!-- ASK AI TAB -->
+<section id="tab-ask">
+  <div class="ask-layout">
+
+    <div class="ask-chat-panel">
+      <div class="ask-chat-header">
+        <div class="ask-ai-icon">✦</div>
+        <div>
+          <div class="ask-chat-title">Ask the Analytics AI</div>
+        </div>
+        <div class="ask-chat-subtitle">Claude + MCP tools</div>
+      </div>
+
+      <div class="ask-messages" id="ask-messages">
+        <div class="ask-welcome" id="ask-welcome">
+          <div class="ask-welcome-icon">✦</div>
+          <h3>Ask anything about video games</h3>
+          <p>I have live access to 63,575 game releases — sales data, critic scores, user reviews. Ask me about trends, hidden gems, controversies, leaderboards, or anything else.</p>
+        </div>
+      </div>
+
+      <div class="ask-input-area">
+        <textarea
+          class="ask-input"
+          id="ask-input"
+          placeholder="e.g. What are the most controversial PS4 games?"
+          rows="1"
+          onkeydown="handleAskKeydown(event)"
+          oninput="autoResize(this)"
+        ></textarea>
+        <button class="ask-send-btn" id="ask-send-btn" onclick="sendAskMessage()">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="ask-sidebar">
+      <div class="ask-sidebar-card">
+        <div class="ask-sidebar-title">Try asking</div>
+        <button class="ask-suggestion" onclick="askSuggestion(this.textContent)">What are the top 5 best-selling games of all time?</button>
+        <button class="ask-suggestion" onclick="askSuggestion(this.textContent)">Which games are hidden gems with high user scores?</button>
+        <button class="ask-suggestion" onclick="askSuggestion(this.textContent)">Most controversial games — where critics and players disagreed most?</button>
+        <button class="ask-suggestion" onclick="askSuggestion(this.textContent)">Top rated PS4 games by Metacritic score</button>
+        <button class="ask-suggestion" onclick="askSuggestion(this.textContent)">Best-selling games of the 2000s</button>
+      </div>
+
+      <div class="ask-sidebar-card">
+        <div class="ask-sidebar-title">Live tools</div>
+        <div class="ask-tools-list">
+          <div class="ask-tool-item"><div class="ask-tool-dot"></div>search_games</div>
+          <div class="ask-tool-item"><div class="ask-tool-dot"></div>get_leaderboard</div>
+          <div class="ask-tool-item"><div class="ask-tool-dot"></div>get_hidden_gems</div>
+          <div class="ask-tool-item"><div class="ask-tool-dot"></div>get_controversy</div>
+          <div class="ask-tool-item"><div class="ask-tool-dot"></div>get_verdict</div>
+        </div>
+      </div>
+
+      <div class="ask-sidebar-card">
+        <button class="ask-clear-btn" onclick="clearAskChat()">Clear conversation</button>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1092,6 +1047,7 @@ let selectedSquadA = null;
 let selectedSquadB = null;
 let decadeChart = null;
 let platformChart = null;
+let askIsLoading = false;
 
 // --- AUTH ---
 async function login() {
@@ -1122,17 +1078,17 @@ function logout() {
 }
 
 // --- TABS ---
-function showTab(name) {
+function showTab(name, btn) {
   document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`tab-${name}`).classList.add('active');
-  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
   if (name === 'analytics') loadAnalytics();
   if (name === 'games') loadGames();
   if (name === 'squads' && token) loadSquads();
 }
 
-// --- VERDICT (GraphQL) ---
+// --- VERDICT ---
 function debounceSearch(val) {
   clearTimeout(searchTimer);
   if (val.length < 2) { document.getElementById('search-results').classList.remove('visible'); return; }
@@ -1151,7 +1107,7 @@ async function searchGames(q) {
           <div class="result-title">${escHtml(g.canonical_title)}</div>
           <div class="result-meta">${g.platform || '?'} · ${g.release_year || '?'}</div>
         </div>
-        <div class="result-meta">${g.meta_score ? `MC ${g.meta_score}` : 'no score'}</div>
+        <div class="result-meta">${g.meta_score ? 'MC ' + g.meta_score : 'no score'}</div>
       </div>`).join('');
     el.classList.add('visible');
   } catch(e) {}
@@ -1166,26 +1122,11 @@ async function selectGame(id, title) {
   document.getElementById('search-results').classList.remove('visible');
   document.getElementById('verdict-search').value = title;
 
-  // use GraphQL to fetch game + verdict in one query
   const query = `query {
   game(id: "${id}", includeVerdict: true, includeDevelopers: true) {
-    canonicalTitle
-    platform
-    releaseYear
-    totalSales
-    metaScore
-    userReview
-    verdict {
-      classification
-      explanation
-      confidence
-      critic
-      user
-      sales
-    }
-    developers {
-      name
-    }
+    canonicalTitle platform releaseYear totalSales metaScore userReview
+    verdict { classification explanation confidence critic user sales }
+    developers { name }
   }
 }`;
 
@@ -1200,16 +1141,13 @@ async function selectGame(id, title) {
     if (!g) return;
 
     const v = g.verdict;
-    const card = document.getElementById('verdict-card');
     document.getElementById('vcard-title').textContent = g.canonicalTitle;
-
     const devNames = g.developers?.map(d => d.name).join(', ') || 'Unknown';
     document.getElementById('vcard-meta').textContent = `${g.platform || '?'} · ${g.releaseYear || '?'} · ${devNames}`;
 
     const badge = document.getElementById('vcard-badge');
     badge.textContent = v?.classification || 'Unrated';
     badge.className = 'verdict-badge ' + verdictClass(v?.classification);
-
     document.getElementById('vcard-explanation').textContent = v?.explanation || '';
 
     setTimeout(() => {
@@ -1222,34 +1160,24 @@ async function selectGame(id, title) {
     const confColors = { high: '#22c55e', medium: '#f59e0b', low: '#ef4444' };
     document.getElementById('vcard-confidence').innerHTML = `
       <div class="confidence-dot" style="background:${confColors[conf]}"></div>
-      ${conf} confidence · based on ${g.metaScore ? 'critic' : ''}${g.userReview ? ', player' : ''}${g.totalSales ? ', sales' : ''} data`;
+      ${conf} confidence`;
 
-    // show the GraphQL query that was used
     document.getElementById('gql-content').innerHTML = syntaxHighlight(query);
     document.getElementById('gql-display').classList.add('visible');
-
-    card.classList.add('visible');
+    document.getElementById('verdict-card').classList.add('visible');
   } catch(e) { console.error(e); }
 }
 
 function animateBar(barId, valId, value) {
-  const pct = Math.min(value, 100);
-  document.getElementById(barId).style.width = pct + '%';
+  document.getElementById(barId).style.width = Math.min(value, 100) + '%';
   document.getElementById(valId).textContent = Math.round(value);
 }
 
 function verdictClass(v) {
   const map = {
-    'All-Time Classic': 'v-classic',
-    'Cult Classic': 'v-cult',
-    'Critic Darling': 'v-darling',
-    'Overhyped': 'v-overhyped',
-    'Hidden Gem': 'v-gem',
-    'Commercial Hit': 'v-hit',
-    'Divisive': 'v-divisive',
-    'Great Game': 'v-great',
-    'Solid Title': 'v-solid',
-    'Unrated': 'v-unrated',
+    'All-Time Classic': 'v-classic', 'Cult Classic': 'v-cult', 'Critic Darling': 'v-darling',
+    'Overhyped': 'v-overhyped', 'Hidden Gem': 'v-gem', 'Commercial Hit': 'v-hit',
+    'Divisive': 'v-divisive', 'Great Game': 'v-great', 'Solid Title': 'v-solid', 'Unrated': 'v-unrated',
   };
   return map[v] || 'v-unrated';
 }
@@ -1263,11 +1191,7 @@ function syntaxHighlight(q) {
 
 // --- ANALYTICS ---
 async function loadAnalytics() {
-  loadDecadeChart();
-  loadPlatformChart();
-  loadControversy();
-  loadGems();
-  loadStats();
+  loadDecadeChart(); loadPlatformChart(); loadControversy(); loadGems(); loadStats();
 }
 
 async function loadStats() {
@@ -1284,36 +1208,15 @@ async function loadDecadeChart() {
     const r = await fetch(`${API}/analytics/decade-trends`);
     const d = await r.json();
     const decades = d.decades.filter(x => x.decade >= 1980 && x.avg_meta_score);
-
     if (decadeChart) decadeChart.destroy();
     const ctx = document.getElementById('decade-chart').getContext('2d');
     decadeChart = new Chart(ctx, {
       type: 'line',
       data: {
-        labels: decades.map(x => `${x.decade}s`),
+        labels: decades.map(x => x.decade + 's'),
         datasets: [
-          {
-            label: 'Avg Metacritic',
-            data: decades.map(x => x.avg_meta_score),
-            borderColor: '#14b8a6',
-            backgroundColor: 'rgba(20,184,166,0.08)',
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: '#14b8a6',
-            pointRadius: 4,
-            yAxisID: 'y',
-          },
-          {
-            label: 'Total Sales (M)',
-            data: decades.map(x => x.total_sales),
-            borderColor: '#f59e0b',
-            backgroundColor: 'rgba(245,158,11,0.08)',
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: '#f59e0b',
-            pointRadius: 4,
-            yAxisID: 'y1',
-          }
+          { label: 'Avg Metacritic', data: decades.map(x => x.avg_meta_score), borderColor: '#14b8a6', backgroundColor: 'rgba(20,184,166,0.08)', tension: 0.4, fill: true, pointBackgroundColor: '#14b8a6', pointRadius: 4, yAxisID: 'y' },
+          { label: 'Total Sales (M)', data: decades.map(x => x.total_sales), borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.08)', tension: 0.4, fill: true, pointBackgroundColor: '#f59e0b', pointRadius: 4, yAxisID: 'y1' }
         ]
       },
       options: {
@@ -1327,34 +1230,23 @@ async function loadDecadeChart() {
         }
       }
     });
-  } catch(e) { console.error(e); }
+  } catch(e) {}
 }
 
 async function loadPlatformChart() {
   try {
     const r = await fetch(`${API}/analytics/platform-dominance`);
     const d = await r.json();
-    const platforms = d.platforms.filter(p => p.total_sales > 0);
-    // aggregate by platform
     const agg = {};
-    platforms.forEach(p => {
-      if (!agg[p.platform]) agg[p.platform] = 0;
-      agg[p.platform] += p.total_sales;
-    });
+    d.platforms.filter(p => p.total_sales > 0).forEach(p => { agg[p.platform] = (agg[p.platform] || 0) + p.total_sales; });
     const sorted = Object.entries(agg).sort((a,b) => b[1]-a[1]).slice(0, 12);
-
     if (platformChart) platformChart.destroy();
     const ctx = document.getElementById('platform-chart').getContext('2d');
     platformChart = new Chart(ctx, {
       type: 'bar',
       data: {
         labels: sorted.map(x => x[0]),
-        datasets: [{
-          label: 'Total Sales (M)',
-          data: sorted.map(x => x[1].toFixed(1)),
-          backgroundColor: sorted.map((_, i) => `hsla(${260 + i * 15}, 70%, 65%, 0.7)`),
-          borderRadius: 4,
-        }]
+        datasets: [{ label: 'Total Sales (M)', data: sorted.map(x => x[1].toFixed(1)), backgroundColor: sorted.map((_, i) => `hsla(${260 + i * 15}, 70%, 65%, 0.7)`), borderRadius: 4 }]
       },
       options: {
         responsive: true, maintainAspectRatio: false,
@@ -1365,7 +1257,7 @@ async function loadPlatformChart() {
         }
       }
     });
-  } catch(e) { console.error(e); }
+  } catch(e) {}
 }
 
 async function loadControversy() {
@@ -1401,7 +1293,6 @@ async function loadGems() {
 }
 
 function quickVerdict(id) {
-  showTab({ target: document.querySelector('.nav-tab') }, 'verdict');
   document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('tab-verdict').classList.add('active');
@@ -1410,7 +1301,7 @@ function quickVerdict(id) {
 }
 
 // --- GAMES ---
-function debounceGames(val) {
+function debounceGames() {
   clearTimeout(gamesTimer);
   gamesTimer = setTimeout(() => loadGames(), 400);
 }
@@ -1420,21 +1311,15 @@ async function loadGames() {
   const platform = document.getElementById('games-platform')?.value || '';
   const genre = document.getElementById('games-genre')?.value || '';
   const sort = document.getElementById('games-sort')?.value || 'total_sales';
-
   let url = `${API}/games?limit=24&sort_by=${sort}`;
   if (title) url += `&title=${encodeURIComponent(title)}`;
   if (platform) url += `&platform=${encodeURIComponent(platform)}`;
   if (genre) url += `&genre=${encodeURIComponent(genre)}`;
-
   document.getElementById('games-grid').innerHTML = `<div class="loading" style="grid-column:1/-1"><div class="spinner"></div>Loading...</div>`;
-
   try {
     const r = await fetch(url);
     const d = await r.json();
-    if (!d.data?.length) {
-      document.getElementById('games-grid').innerHTML = `<div class="empty-state" style="grid-column:1/-1">No games found</div>`;
-      return;
-    }
+    if (!d.data?.length) { document.getElementById('games-grid').innerHTML = `<div class="empty-state" style="grid-column:1/-1">No games found</div>`; return; }
     document.getElementById('games-grid').innerHTML = d.data.map(g => `
       <div class="game-card" onclick="goVerdict('${g.id}', '${escHtml(g.canonical_title)}')">
         <div class="game-card-title">${escHtml(g.canonical_title)}</div>
@@ -1444,7 +1329,6 @@ async function loadGames() {
           ${g.user_review ? `<span class="score-chip user">User ${g.user_review}</span>` : ''}
           ${g.total_sales ? `<span class="score-chip sales">${g.total_sales}M sold</span>` : ''}
         </div>
-        ${g.has_metacritic ? `<span class="verdict-badge ${verdictClass('')} v-unrated" style="font-size:0.65rem;padding:3px 8px;">Click for verdict</span>` : ''}
       </div>`).join('');
   } catch(e) { document.getElementById('games-grid').innerHTML = `<div class="empty-state" style="grid-column:1/-1">Could not load games</div>`; }
 }
@@ -1464,32 +1348,22 @@ async function loadSquads() {
   try {
     const r = await fetch(`${API}/squads`, { headers: { Authorization: `Bearer ${token}` } });
     const d = await r.json();
-
     document.getElementById('squads-content').innerHTML = `
       <div class="squads-layout">
         <div>
-          <div class="section-header" style="margin-bottom:1rem">
-            <span class="section-title" style="font-size:1rem">Your squads</span>
-          </div>
+          <div class="section-header" style="margin-bottom:1rem"><span class="section-title" style="font-size:1rem">Your squads</span></div>
           <div class="squad-list" id="squad-list">
             ${d.data.map(s => `
               <div class="squad-item" onclick="selectSquad('${s.id}', '${escHtml(s.name)}', this)">
-                <div>
-                  <div class="squad-name">${escHtml(s.name)}</div>
-                  <div class="squad-count">${s.item_count} games</div>
-                </div>
+                <div><div class="squad-name">${escHtml(s.name)}</div><div class="squad-count">${s.item_count} games</div></div>
                 <div class="squad-arrow">›</div>
               </div>`).join('')}
             ${!d.data.length ? '<div class="empty-state">No squads yet — create one via the API</div>' : ''}
           </div>
         </div>
         <div>
-          <div class="section-header" style="margin-bottom:1rem">
-            <span class="section-title" style="font-size:1rem">Battle</span>
-          </div>
-          <div style="margin-bottom:1rem; font-size:0.8rem; color: var(--muted)">
-            Select two squads from the list then choose a scoring preset.
-          </div>
+          <div class="section-header" style="margin-bottom:1rem"><span class="section-title" style="font-size:1rem">Battle</span></div>
+          <div style="margin-bottom:1rem; font-size:0.8rem; color: var(--muted)">Select two squads then choose a scoring preset.</div>
           <div style="font-size:0.75rem; color:var(--muted); margin-bottom:6px; font-family:var(--font-mono)">SQUAD A: <span id="squad-a-name" style="color:var(--accent2)">none selected</span></div>
           <div style="font-size:0.75rem; color:var(--muted); margin-bottom:1rem; font-family:var(--font-mono)">SQUAD B: <span id="squad-b-name" style="color:var(--accent2)">none selected</span></div>
           <div class="preset-selector">
@@ -1536,27 +1410,122 @@ async function runBattle() {
     });
     const d = await r.json();
     if (d.detail) { alert(d.detail); return; }
-
     const result = document.getElementById('battle-result');
     const isDraw = d.winner_name === 'Draw';
     result.innerHTML = `
-      <div class="winner-banner">${isDraw ? 'Draw!' : `Winner: ${escHtml(d.winner_name)}`}</div>
+      <div class="winner-banner">${isDraw ? 'Draw!' : 'Winner: ' + escHtml(d.winner_name)}</div>
       <div class="battle-vs">
-        <div class="battle-squad-score">
-          <div class="battle-squad-name">${escHtml(d.squad_a_name)}</div>
-          <div class="battle-score">${d.score_a?.toFixed(1)}</div>
-        </div>
+        <div class="battle-squad-score"><div class="battle-squad-name">${escHtml(d.squad_a_name)}</div><div class="battle-score">${d.score_a?.toFixed(1)}</div></div>
         <div class="battle-vs-label">VS</div>
-        <div class="battle-squad-score">
-          <div class="battle-squad-name">${escHtml(d.squad_b_name)}</div>
-          <div class="battle-score">${d.score_b?.toFixed(1)}</div>
-        </div>
+        <div class="battle-squad-score"><div class="battle-squad-name">${escHtml(d.squad_b_name)}</div><div class="battle-score">${d.score_b?.toFixed(1)}</div></div>
       </div>
-      <div style="font-size:0.72rem; color:var(--muted); font-family:var(--font-mono)">
-        Preset: ${selectedPreset} · Weights: critic ${d.weights?.critic} / user ${d.weights?.user} / sales ${d.weights?.sales}
-      </div>`;
+      <div style="font-size:0.72rem; color:var(--muted); font-family:var(--font-mono)">Preset: ${selectedPreset}</div>`;
     result.classList.add('visible');
-  } catch(e) { alert('Battle failed — check squads have enough games'); }
+  } catch(e) { alert('Battle failed'); }
+}
+
+// --- ASK AI ---
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 110) + 'px';
+}
+
+function handleAskKeydown(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAskMessage(); }
+}
+
+function askSuggestion(text) {
+  const input = document.getElementById('ask-input');
+  input.value = text;
+  autoResize(input);
+  sendAskMessage();
+}
+
+function appendMessage(role, text) {
+  const welcome = document.getElementById('ask-welcome');
+  if (welcome) welcome.remove();
+
+  const container = document.getElementById('ask-messages');
+  const div = document.createElement('div');
+  div.className = 'ask-msg ' + role;
+  div.innerHTML = `
+    <div class="ask-msg-avatar">${role === 'user' ? 'YOU' : 'AI'}</div>
+    <div class="ask-msg-bubble">${escHtml(text).replace(/\n/g, '<br>')}</div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function showTypingIndicator() {
+  const welcome = document.getElementById('ask-welcome');
+  if (welcome) welcome.remove();
+
+  const container = document.getElementById('ask-messages');
+  const div = document.createElement('div');
+  div.className = 'ask-typing';
+  div.id = 'ask-typing-indicator';
+  div.innerHTML = `
+    <div class="ask-msg-avatar" style="background:linear-gradient(135deg,var(--accent),var(--teal));color:white;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.62rem;font-family:var(--font-mono);flex-shrink:0;margin-top:2px;">AI</div>
+    <div class="ask-typing-dots">
+      <div class="ask-typing-dot"></div>
+      <div class="ask-typing-dot"></div>
+      <div class="ask-typing-dot"></div>
+    </div>
+  `;
+  container.appendChild(div);
+  container.scrollTop = container.scrollHeight;
+}
+
+function removeTypingIndicator() {
+  const el = document.getElementById('ask-typing-indicator');
+  if (el) el.remove();
+}
+
+async function sendAskMessage() {
+  if (askIsLoading) return;
+  const input = document.getElementById('ask-input');
+  const question = input.value.trim();
+  if (!question) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  askIsLoading = true;
+  document.getElementById('ask-send-btn').disabled = true;
+
+  appendMessage('user', question);
+  showTypingIndicator();
+
+  try {
+    const r = await fetch(`${API}/ask`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question })
+    });
+    removeTypingIndicator();
+    if (!r.ok) {
+      const err = await r.json().catch(() => ({}));
+      appendMessage('assistant', 'Sorry, something went wrong: ' + (err.detail || r.statusText));
+    } else {
+      const d = await r.json();
+      appendMessage('assistant', d.answer);
+    }
+  } catch(e) {
+    removeTypingIndicator();
+    appendMessage('assistant', 'Could not reach the API. Make sure the server is running at localhost:8000.');
+  } finally {
+    askIsLoading = false;
+    document.getElementById('ask-send-btn').disabled = false;
+    document.getElementById('ask-input').focus();
+  }
+}
+
+function clearAskChat() {
+  document.getElementById('ask-messages').innerHTML = `
+    <div class="ask-welcome" id="ask-welcome">
+      <div class="ask-welcome-icon">✦</div>
+      <h3>Ask anything about video games</h3>
+      <p>I have live access to 63,575 game releases — sales data, critic scores, user reviews. Ask me about trends, hidden gems, controversies, leaderboards, or anything else.</p>
+    </div>`;
 }
 
 function escHtml(s) {
@@ -1564,7 +1533,6 @@ function escHtml(s) {
   return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;');
 }
 
-// init
 loadGames();
 </script>
 </body>

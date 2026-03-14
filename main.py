@@ -15,6 +15,7 @@ from src.insights.router import router as analytics_router
 from src.squads.router import router as squads_router
 from src.battles.router import router as battles_router
 from src.graphql.router import router as graphql_router
+from src.ask.ask import router as ask_router
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
@@ -40,6 +41,8 @@ app = FastAPI(
     openapi_url="/api/openapi.json",
     lifespan=lifespan,
 )
+
+app.include_router(ask_router)
 
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
