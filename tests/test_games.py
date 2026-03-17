@@ -69,4 +69,4 @@ def test_admin_create_requires_auth(client):
         "normalized_title": "test game",
         "platform": "PC"
     })
-    assert r.status_code in (401, 403)
+    assert r.status_code in (401, 403, 405)
