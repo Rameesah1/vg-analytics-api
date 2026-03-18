@@ -30,13 +30,13 @@ def upsert_by_name(db: Session, model, name: str) -> str:
 
 
 def main():
-    print('🎮 Starting seed...\n')
+    print('Starting seed...\n')
     db = SessionLocal()
 
     try:
-        # --- STAGE A: Parse + insert VGChartz ---
+        # Parse and insert VGChartz data
         vg_rows = parse_vgchartz('./data_comp3011/vgchartz-2024.csv')
-        print('\n⏳ Inserting VGChartz data...')
+        print('\n Inserting VGChartz data...')
 
         inserted = 0
         skipped = 0
@@ -99,18 +99,18 @@ def main():
                 inserted += 1
                 if inserted % 1000 == 0:
                     db.commit()
-                    print(f'  ✅ Inserted {inserted} releases...')
+                    print(f'  Inserted {inserted} releases...')
 
             except Exception:
                 db.rollback()
                 skipped += 1
 
         db.commit()
-        print(f'\n✅ VGChartz: {inserted} inserted, {skipped} skipped')
+        print(f'\n VGChartz: {inserted} inserted, {skipped} skipped')
 
-        # --- STAGE B: Match Metacritic ---
+        # -match metacritic 
         mc_rows = parse_metacritic('./data_comp3011/all_games.csv')
-        print('\n⏳ Matching Metacritic data...')
+        print('\n Matching Metacritic data...')
 
         matched = 0
         fuzzy_matched = 0
@@ -188,10 +188,10 @@ def main():
                 db.rollback()
                 unmatched += 1
 
-        print(f'✅ Exact matches: {matched}')
-        print(f'✅ Fuzzy matches: {fuzzy_matched}')
-        print(f'❌ Unmatched: {unmatched}')
-        print('\n🎮 Seed complete!')
+        print(f'Exact matches: {matched}')
+        print(f' Fuzzy matches: {fuzzy_matched}')
+        print(f' Unmatched: {unmatched}')
+        print('\nSeed complete!')
 
     finally:
         db.close()

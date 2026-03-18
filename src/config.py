@@ -6,6 +6,7 @@ class Settings(BaseSettings):
     database_url: str
     jwt_secret: str
     environment: str = "development"
+    anthropic_api_key: str = ""
 
     class Config:
         env_file = ".env"
