@@ -16,12 +16,15 @@ from src.squads.router import router as squads_router
 from src.battles.router import router as battles_router
 from src.graphql.router import router as graphql_router
 from src.ask.ask import router as ask_router
+from src.db.models import Base
+from src.db.session import engine
 
 limiter = Limiter(key_func=get_remote_address, default_limits=["60/minute"])
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    Base.metadata.create_all(bind=engine)
     print("Video Game Analytics API starting up...")
     print("Swagger docs at http://localhost:8000/api/docs")
     print("GraphQL playground at http://localhost:8000/api/graphql")
