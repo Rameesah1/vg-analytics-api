@@ -29,9 +29,22 @@ def upsert_by_name(db: Session, model, name: str) -> str:
     return obj.id
 
 
+def upsert_cached(db: Session, model, name: str, cache: dict) -> str:
+    if name in cache:
+        return cache[name]
+    id = upsert_by_name(db, model, name)
+    cache[name] = id
+    return id
+
+
 def main():
     print('Starting seed...\n')
     db = SessionLocal()
+
+    platform_cache = {}
+    genre_cache = {}
+    developer_cache = {}
+    publisher_cache = {}
 
     try:
         # Parse and insert VGChartz data
@@ -43,10 +56,10 @@ def main():
 
         for row in vg_rows:
             try:
-                platform_id = upsert_by_name(db, Platform, row.normalized_console or row.console)
-                genre_id = upsert_by_name(db, Genre, row.genre)
-                developer_id = upsert_by_name(db, Developer, row.developer)
-                publisher_id = upsert_by_name(db, Publisher, row.publisher)
+                platform_id = upsert_cached(db, Platform, row.normalized_console or row.console, platform_cache)
+                genre_id = upsert_cached(db, Genre, row.genre, genre_cache)
+                developer_id = upsert_cached(db, Developer, row.developer, developer_cache)
+                publisher_id = upsert_cached(db, Publisher, row.publisher, publisher_cache)
 
                 existing_game = db.execute(
                     select(Game).where(Game.normalized_title == row.normalized_title)
@@ -108,7 +121,7 @@ def main():
         db.commit()
         print(f'\n VGChartz: {inserted} inserted, {skipped} skipped')
 
-        # -match metacritic 
+        # match metacritic
         mc_rows = parse_metacritic('./data_comp3011/all_games.csv')
         print('\n Matching Metacritic data...')
 
@@ -117,6 +130,14 @@ def main():
         unmatched = 0
 
         enable_fuzzy = os.environ.get('SEED_ENABLE_FUZZY', 'false').lower() == 'true'
+
+        # load all releases into memory once to avoid per-row DB queries in fuzzy matching
+        all_releases_by_platform = {}
+        for rel, norm_title in db.execute(
+            select(GameRelease, Game.normalized_title)
+            .join(Game, Game.id == GameRelease.game_id)
+        ).all():
+            all_releases_by_platform.setdefault(rel.platform_id, []).append((rel, norm_title))
 
         for row in mc_rows:
             try:
@@ -151,16 +172,11 @@ def main():
                         release.has_metacritic = True
                         release.match_strategy = 'EXACT'
                         release.match_confidence = 1.00
-                        db.commit()
                         matched += 1
                         continue
 
                 if enable_fuzzy:
-                    platform_releases = db.execute(
-                        select(GameRelease, Game.normalized_title)
-                        .join(Game, Game.id == GameRelease.game_id)
-                        .where(GameRelease.platform_id == platform.id)
-                    ).all()
+                    platform_releases = all_releases_by_platform.get(platform.id, [])
 
                     best_match = None
                     best_score = 0.0
@@ -178,7 +194,6 @@ def main():
                         best_match.has_metacritic = True
                         best_match.match_strategy = 'FUZZY'
                         best_match.match_confidence = round(best_score, 2)
-                        db.commit()
                         fuzzy_matched += 1
                         continue
 
@@ -188,6 +203,7 @@ def main():
                 db.rollback()
                 unmatched += 1
 
+        db.commit()
         print(f'Exact matches: {matched}')
         print(f' Fuzzy matches: {fuzzy_matched}')
         print(f' Unmatched: {unmatched}')
