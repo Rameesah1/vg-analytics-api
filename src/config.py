@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     jwt_secret: str
     environment: str = "development"
     anthropic_api_key: str = ""
+    seed_enable_fuzzy: bool = False
 
     class Config:
         env_file = ".env"
