@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: pytest tests/test_verdict.py tests/test_battles.py tests/test_system.py -v
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vg_analytics
+          JWT_SECRET: testjwtsecret
+          ENVIRONMENT: test
+          ANTHROPIC_API_KEY: test
