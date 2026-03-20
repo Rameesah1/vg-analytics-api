@@ -31,10 +31,10 @@ The core idea is that critic scores, player reviews and commercial sales data ea
 
 ## Datasets
 
-- **VGChartz 2024** -- 63,575 game releases with global, NA, JP, PAL and other regional sales data
-- **Metacritic 1995-2021** -- 18,000 games with critic scores and user reviews
-- Joined via a two-stage matching pipeline: 7,182 exact matches and 1,151 fuzzy matches giving 8,333 records with data from both sources
-- Every record stores a `match_confidence` score and `match_strategy` field for data provenance
+- **VGChartz 2024** - game releases across all major platforms with global and regional sales data
+- **Metacritic 1995-2021** - critic scores and user reviews covering releases up to 2021
+- The two datasets are joined using exact normalised title matching followed by fuzzy matching for titles that do not align exactly
+- Every record stores a `match_confidence` score and `match_strategy` field so consumers can filter by data quality
 
 ---
 
