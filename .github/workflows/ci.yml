@@ -10,6 +10,21 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: vg_analytics
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
       - uses: actions/checkout@v4
 
@@ -21,8 +36,24 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      - name: Create tables
+        run: python -c "from src.db.models import Base; from src.db.session import engine; Base.metadata.create_all(bind=engine); print('tables created')"
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vg_analytics
+          JWT_SECRET: testjwtsecret
+          ENVIRONMENT: test
+          ANTHROPIC_API_KEY: test
+
       - name: Run unit tests
-        run: pytest tests/test_verdict.py tests/test_battles.py tests/test_system.py -v
+        run: pytest tests/test_verdict.py tests/test_battles.py -v
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vg_analytics
+          JWT_SECRET: testjwtsecret
+          ENVIRONMENT: test
+          ANTHROPIC_API_KEY: test
+
+      - name: Run system tests
+        run: pytest tests/test_system.py -v
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/vg_analytics
           JWT_SECRET: testjwtsecret
