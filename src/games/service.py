@@ -94,11 +94,41 @@ class GamesService:
             },
         }
 
+    def search_by_title(self, title: str, limit: int = 8):
+        """One result per game (not per release) — returns game_id as id."""
+        rows = (
+            self.db.query(
+                Game.id,
+                Game.canonical_title,
+                func.min(GameRelease.release_year).label("release_year"),
+                func.round(func.avg(GameRelease.meta_score), 1).label("meta_score"),
+            )
+            .join(GameRelease, GameRelease.game_id == Game.id)
+            .filter(
+                Game.canonical_title.ilike(f"%{title}%"),
+                GameRelease.meta_score.isnot(None),
+            )
+            .group_by(Game.id, Game.canonical_title)
+            .order_by(desc(func.avg(GameRelease.meta_score)).nullslast())
+            .limit(limit)
+            .all()
+        )
+        return [
+            {
+                "id": str(r.id),
+                "canonical_title": r.canonical_title,
+                "release_year": r.release_year,
+                "meta_score": float(r.meta_score) if r.meta_score else None,
+            }
+            for r in rows
+        ]
+
     def find_one(self, release_id: str):
         # full detail view including all sales breakdowns and provenance fields
         row = (
             self.db.query(
                 GameRelease.id,
+                GameRelease.game_id,
                 Game.canonical_title,
                 GameRelease.release_year,
                 GameRelease.release_date,
@@ -142,6 +172,7 @@ class GamesService:
     def _row_to_detail_dict(self, row) -> dict:
         return {
             **self._row_to_dict(row),
+            "game_id": str(row.game_id),
             "release_date": row.release_date,
             "na_sales": float(row.na_sales) if row.na_sales else None,
             "jp_sales": float(row.jp_sales) if row.jp_sales else None,

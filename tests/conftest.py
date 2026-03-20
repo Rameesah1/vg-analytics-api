@@ -20,27 +20,12 @@ TestSession = sessionmaker(bind=engine)
 def setup_db():
     Base.metadata.create_all(bind=engine)
     yield
-    Base.metadata.drop_all(bind=engine)
 
 
 @pytest.fixture
-def db():
-    session = TestSession()
-    try:
-        yield session
-    finally:
-        session.rollback()
-        session.close()
-
-
-@pytest.fixture
-def client(db):
-    def override_db():
-        yield db
-    app.dependency_overrides[get_db] = override_db
+def client():
     with TestClient(app) as c:
         yield c
-    app.dependency_overrides.clear()
 
 
 @pytest.fixture

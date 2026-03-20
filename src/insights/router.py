@@ -29,6 +29,14 @@ def get_leaderboard(
 
 
 @router.get(
+    "/verdict/game/{game_id}",
+    summary="Verdict Machine -- game-level verdict by game_id (as returned by /api/games/search)",
+)
+def get_verdict_by_game_id(game_id: str, db: Session = Depends(get_db)):
+    return AnalyticsService(db).get_verdict_by_game_id(game_id)
+
+
+@router.get(
     "/verdict/{game_release_id}",
     summary="Verdict Machine -- classifies a game as All-Time Classic, Hidden Gem, Cult Classic etc.",
 )
@@ -89,3 +97,15 @@ def get_platform_dominance(
 ):
     query = DecadeQuerySchema(decade=decade)
     return AnalyticsService(db).get_platform_dominance(query)
+
+
+@router.get("/stats", summary="Database statistics")
+def get_stats(db: Session = Depends(get_db)):
+    from sqlalchemy import func
+    from src.db.models import GameRelease
+    total = db.query(func.count(GameRelease.id)).scalar()
+    full = db.query(func.count(GameRelease.id)).filter(
+        GameRelease.has_metacritic == True,
+        GameRelease.has_vgchartz == True
+    ).scalar()
+    return {"total_releases": total, "with_full_data": full}

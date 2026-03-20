@@ -70,7 +70,7 @@ def test_hidden_gems_structure(client):
 
 
 def test_decade_trends_structure(client):
-    r = client.get("/api/analytics/decade-trends")
+    r = client.get("/api/analytics/decade-trends?decade=2000")
     assert r.status_code == 200
     body = r.json()
     assert "decades" in body

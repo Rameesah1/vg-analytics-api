@@ -13,6 +13,38 @@ from src.graphql.schema import (
 )
 
 
+def _aggregate_game_scores(db: Session, game_id) -> tuple:
+    """Aggregate scores across all platform releases using sales-weighted averaging.
+    Releases with higher sales contribute more to the final score — the version
+    most players experienced matters most. Falls back to simple average for games
+    with no sales data (e.g. F2P titles)."""
+    agg = (
+        db.query(
+            func.sum(GameRelease.total_sales).label("total_sales"),
+            func.avg(GameRelease.meta_score).label("avg_meta"),
+            func.avg(GameRelease.user_review).label("avg_user"),
+            func.sum(GameRelease.meta_score * GameRelease.total_sales).label("weighted_meta"),
+            func.sum(GameRelease.user_review * GameRelease.total_sales).label("weighted_user"),
+        )
+        .filter(GameRelease.game_id == game_id)
+        .first()
+    )
+    total_sales = float(agg.total_sales) if agg and agg.total_sales else None
+    if total_sales:
+        # sales-weighted average: version most people played drives the score
+        meta = float(agg.weighted_meta) / total_sales if agg.weighted_meta else None
+        user = float(agg.weighted_user) / total_sales if agg.weighted_user else None
+    else:
+        # fallback for F2P / missing sales data
+        meta = float(agg.avg_meta) if agg and agg.avg_meta else None
+        user = float(agg.avg_user) if agg and agg.avg_user else None
+    return (
+        meta,
+        user,
+        total_sales,
+    )
+
+
 def _compute_verdict(meta_score, user_review, total_sales) -> VerdictType:
     critic = float(meta_score) if meta_score else 0
     user = (float(user_review) if user_review else 0) * 10
@@ -60,6 +92,19 @@ def _compute_verdict(meta_score, user_review, total_sales) -> VerdictType:
     )
 
 
+def _get_developers_for_game(db: Session, game_id) -> list[DeveloperType]:
+    """Distinct developers across all releases of a game."""
+    devs = (
+        db.query(Developer.id, Developer.name, Developer.country)
+        .join(GameReleaseDeveloper, GameReleaseDeveloper.developer_id == Developer.id)
+        .join(GameRelease, GameRelease.id == GameReleaseDeveloper.game_release_id)
+        .filter(GameRelease.game_id == game_id)
+        .distinct()
+        .all()
+    )
+    return [DeveloperType(id=d.id, name=d.name, country=d.country) for d in devs]
+
+
 def _get_developers_for_release(db: Session, release_id) -> list[DeveloperType]:
     devs = (
         db.query(Developer.id, Developer.name, Developer.country)
@@ -88,7 +133,8 @@ def _row_to_game_type(row, db: Session, include_verdict=False, include_developer
     # only resolve nested fields if explicitly requested in the query
     # this avoids the N+1 problem -- we only hit the DB when the client asks for it
     if include_verdict:
-        game.verdict = _compute_verdict(row.meta_score, row.user_review, row.total_sales)
+        agg_meta, agg_user, agg_sales = _aggregate_game_scores(db, row.game_id)
+        game.verdict = _compute_verdict(agg_meta, agg_user, agg_sales)
     if include_developers:
         game.developers = _get_developers_for_release(db, row.id)
 
@@ -110,6 +156,7 @@ class Query:
         row = (
             db.query(
                 GameRelease.id,
+                GameRelease.game_id,
                 Game.canonical_title,
                 GameRelease.release_year,
                 Platform.name.label("platform"),
@@ -129,6 +176,55 @@ class Query:
         if not row:
             return None
         return _row_to_game_type(row, db, include_verdict, include_developers)
+
+    @strawberry.field(description="Get a game by its game ID with scores aggregated across all platform releases")
+    def game_by_game_id(
+        self,
+        id: str,
+        include_verdict: bool = False,
+        include_developers: bool = False,
+        info: Info = None,
+    ) -> Optional[GameType]:
+        db: Session = info.context["db"]
+        game = db.query(Game).filter(Game.id == id).first()
+        if not game:
+            return None
+
+        agg = (
+            db.query(
+                func.min(GameRelease.release_year).label("release_year"),
+                func.avg(GameRelease.meta_score).label("avg_meta"),
+                func.avg(GameRelease.user_review).label("avg_user"),
+                func.sum(GameRelease.total_sales).label("total_sales"),
+                func.bool_or(GameRelease.has_vgchartz).label("has_vgchartz"),
+                func.bool_or(GameRelease.has_metacritic).label("has_metacritic"),
+                func.max(GameRelease.summary).label("summary"),
+            )
+            .filter(GameRelease.game_id == id)
+            .first()
+        )
+
+        result = GameType(
+            id=game.id,
+            canonical_title=game.canonical_title,
+            release_year=int(agg.release_year) if agg and agg.release_year else None,
+            platform=None,
+            total_sales=float(agg.total_sales) if agg and agg.total_sales else None,
+            meta_score=float(agg.avg_meta) if agg and agg.avg_meta else None,
+            user_review=float(agg.avg_user) if agg and agg.avg_user else None,
+            summary=agg.summary if agg else None,
+            match_confidence=None,
+            has_vgchartz=bool(agg.has_vgchartz) if agg else False,
+            has_metacritic=bool(agg.has_metacritic) if agg else False,
+        )
+
+        if include_verdict:
+            agg_meta, agg_user, agg_sales = _aggregate_game_scores(db, id)
+            result.verdict = _compute_verdict(agg_meta, agg_user, agg_sales)
+        if include_developers:
+            result.developers = _get_developers_for_game(db, id)
+
+        return result
 
     @strawberry.field(description="Search and filter game releases. Supports title, platform, genre, year range and pagination")
     def games(
@@ -185,21 +281,18 @@ class Query:
             total_pages=-(-total // limit),
         )
 
-    @strawberry.field(description="Get the Verdict Machine classification for a game release")
+    @strawberry.field(description="Get the Verdict Machine classification for a game, aggregated across all platform releases")
     def verdict(self, id: str, info: Info = None) -> Optional[VerdictType]:
         db: Session = info.context["db"]
         row = (
-            db.query(
-                GameRelease.meta_score,
-                GameRelease.user_review,
-                GameRelease.total_sales,
-            )
+            db.query(GameRelease.game_id)
             .filter(GameRelease.id == id)
             .first()
         )
         if not row:
             return None
-        return _compute_verdict(row.meta_score, row.user_review, row.total_sales)
+        agg_meta, agg_user, agg_sales = _aggregate_game_scores(db, row.game_id)
+        return _compute_verdict(agg_meta, agg_user, agg_sales)
 
     @strawberry.field(description="Games where critics and players most disagreed -- ranked by divergence score")
     def controversy(self, limit: int = 10, info: Info = None) -> list[ControversyType]:

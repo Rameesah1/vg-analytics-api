@@ -122,6 +122,7 @@ class AnalyticsService:
         row = (
             self.db.query(
                 GameRelease.id,
+                GameRelease.game_id,
                 Game.canonical_title.label("title"),
                 Platform.name.label("platform"),
                 GameRelease.release_year,
@@ -138,13 +139,77 @@ class AnalyticsService:
         if not row:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
 
-        verdict = self._compute_verdict(
-            float(row.meta_score) if row.meta_score else None,
-            float(row.user_review) if row.user_review else None,
-            float(row.total_sales) if row.total_sales else None,
+        # aggregate across all platform releases using sales-weighted averaging
+        # releases with higher sales contribute more — the version most players
+        # experienced matters most. falls back to simple avg for F2P/missing sales
+        agg = (
+            self.db.query(
+                func.sum(GameRelease.total_sales).label("total_sales"),
+                func.avg(GameRelease.meta_score).label("avg_meta"),
+                func.avg(GameRelease.user_review).label("avg_user"),
+                func.sum(GameRelease.meta_score * GameRelease.total_sales).label("weighted_meta"),
+                func.sum(GameRelease.user_review * GameRelease.total_sales).label("weighted_user"),
+            )
+            .filter(GameRelease.game_id == row.game_id)
+            .first()
         )
 
+        total_sales = float(agg.total_sales) if agg and agg.total_sales else None
+        if total_sales:
+            meta = float(agg.weighted_meta) / total_sales if agg.weighted_meta else None
+            user = float(agg.weighted_user) / total_sales if agg.weighted_user else None
+        else:
+            meta = float(agg.avg_meta) if agg and agg.avg_meta else None
+            user = float(agg.avg_user) if agg and agg.avg_user else None
+
+        verdict = self._compute_verdict(meta, user, total_sales)
+
         result = {**self._game_row_to_dict(row), **verdict, "cached": False}
+        _cache_set(cache_key, result)
+        return result
+
+    def get_verdict_by_game_id(self, game_id: str):
+        """Verdict for a game_id directly — as returned by /api/games/search."""
+        cache_key = f"vg:verdict:game:{game_id}"
+        cached = _cache_get(cache_key)
+        if cached:
+            return {**cached, "cached": True}
+
+        game = self.db.query(Game).filter(Game.id == game_id).first()
+        if not game:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Game not found")
+
+        agg = (
+            self.db.query(
+                func.sum(GameRelease.total_sales).label("total_sales"),
+                func.avg(GameRelease.meta_score).label("avg_meta"),
+                func.avg(GameRelease.user_review).label("avg_user"),
+                func.sum(GameRelease.meta_score * GameRelease.total_sales).label("weighted_meta"),
+                func.sum(GameRelease.user_review * GameRelease.total_sales).label("weighted_user"),
+                func.min(GameRelease.release_year).label("release_year"),
+            )
+            .filter(GameRelease.game_id == game_id)
+            .first()
+        )
+
+        total_sales = float(agg.total_sales) if agg and agg.total_sales else None
+        if total_sales:
+            meta = float(agg.weighted_meta) / total_sales if agg.weighted_meta else None
+            user = float(agg.weighted_user) / total_sales if agg.weighted_user else None
+        else:
+            meta = float(agg.avg_meta) if agg and agg.avg_meta else None
+            user = float(agg.avg_user) if agg and agg.avg_user else None
+
+        verdict = self._compute_verdict(meta, user, total_sales)
+
+        result = {
+            "id": str(game_id),
+            "title": game.canonical_title,
+            "release_year": int(agg.release_year) if agg and agg.release_year else None,
+            "total_sales": total_sales,
+            **verdict,
+            "cached": False,
+        }
         _cache_set(cache_key, result)
         return result
 

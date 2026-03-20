@@ -855,6 +855,8 @@
     <h1>The Verdict<br>Machine</h1>
     <p class="hero-sub">Search any game to discover its classification — from All-Time Classic to Hidden Gem — powered by critic scores, player reviews and global sales data.</p>
 
+    <p style="font-size:0.72rem;opacity:0.45;margin:-8px 0 16px;letter-spacing:0.04em;">Dataset: VGChartz sales (1994–2024) · Metacritic scores (1995–2021)</p>
+
     <div class="verdict-search-wrap">
       <div class="verdict-input-row">
         <input type="text" id="verdict-search" placeholder="Search for a game e.g. Grand Theft Auto V..." oninput="debounceSearch(this.value)">
@@ -888,6 +890,7 @@
           <div class="score-bar-track"><div class="score-bar-fill" id="bar-sales" style="background: var(--gold)"></div></div>
           <span class="score-bar-value" id="val-sales" style="color: var(--gold)"></span>
         </div>
+        <div id="vcard-sales-actual" style="font-size:0.75rem;color:var(--gold);opacity:0.7;text-align:right;margin-top:2px;"></div>
       </div>
       <div id="vcard-confidence" class="confidence-pill"></div>
       <div class="gql-query" id="gql-display">
@@ -938,7 +941,7 @@
 <section id="tab-games">
   <div class="section-header">
     <span class="section-title">Game Explorer</span>
-    <span class="section-tag">63,575 releases</span>
+    <span class="section-tag" id="games-count-tag">releases</span>
   </div>
   <div class="games-controls">
     <input type="text" id="games-search" placeholder="Search title..." style="flex: 1; min-width: 180px;" oninput="debounceGames(this.value)">
@@ -1097,15 +1100,15 @@ function debounceSearch(val) {
 
 async function searchGames(q) {
   try {
-    const r = await fetch(`${API}/games?title=${encodeURIComponent(q)}&limit=8&sort_by=meta_score`);
+    const r = await fetch(`${API}/games/search?title=${encodeURIComponent(q)}&limit=8`);
     const d = await r.json();
     const el = document.getElementById('search-results');
-    if (!d.data || !d.data.length) { el.classList.remove('visible'); return; }
-    el.innerHTML = d.data.map(g => `
+    if (!d.length) { el.classList.remove('visible'); return; }
+    el.innerHTML = d.map(g => `
       <div class="search-result-item" onclick="selectGame('${g.id}', '${escHtml(g.canonical_title)}')">
         <div>
           <div class="result-title">${escHtml(g.canonical_title)}</div>
-          <div class="result-meta">${g.platform || '?'} · ${g.release_year || '?'}</div>
+          <div class="result-meta">${g.release_year || '?'}</div>
         </div>
         <div class="result-meta">${g.meta_score ? 'MC ' + g.meta_score : 'no score'}</div>
       </div>`).join('');
@@ -1122,9 +1125,20 @@ async function selectGame(id, title) {
   document.getElementById('search-results').classList.remove('visible');
   document.getElementById('verdict-search').value = title;
 
+  // id may be a game_release_id (from analytics panels / games grid)
+  // or a game_id (from verdict search) -- resolve to game_id either way
+  let gameId = id;
+  try {
+    const lookup = await fetch(`${API}/games/${id}`);
+    if (lookup.ok) {
+      const rel = await lookup.json();
+      if (rel.game_id) gameId = rel.game_id;
+    }
+  } catch(e) {}
+
   const query = `query {
-  game(id: "${id}", includeVerdict: true, includeDevelopers: true) {
-    canonicalTitle platform releaseYear totalSales metaScore userReview
+  gameByGameId(id: "${gameId}", includeVerdict: true, includeDevelopers: true) {
+    canonicalTitle releaseYear totalSales metaScore userReview
     verdict { classification explanation confidence critic user sales }
     developers { name }
   }
@@ -1137,13 +1151,13 @@ async function selectGame(id, title) {
       body: JSON.stringify({ query })
     });
     const d = await r.json();
-    const g = d.data?.game;
+    const g = d.data?.gameByGameId;
     if (!g) return;
 
     const v = g.verdict;
     document.getElementById('vcard-title').textContent = g.canonicalTitle;
     const devNames = g.developers?.map(d => d.name).join(', ') || 'Unknown';
-    document.getElementById('vcard-meta').textContent = `${g.platform || '?'} · ${g.releaseYear || '?'} · ${devNames}`;
+    document.getElementById('vcard-meta').textContent = `${g.releaseYear || '?'} · ${devNames}`;
 
     const badge = document.getElementById('vcard-badge');
     badge.textContent = v?.classification || 'Unrated';
@@ -1155,6 +1169,13 @@ async function selectGame(id, title) {
       animateBar('bar-user', 'val-user', v?.user || 0);
       animateBar('bar-sales', 'val-sales', v?.sales || 0);
     }, 50);
+
+    const salesEl = document.getElementById('vcard-sales-actual');
+    if (g.totalSales) {
+      salesEl.textContent = `${g.totalSales.toFixed(1)}M units sold across all platforms`;
+    } else {
+      salesEl.textContent = 'No sales data available';
+    }
 
     const conf = v?.confidence || 'low';
     const confColors = { high: '#22c55e', medium: '#f59e0b', low: '#ef4444' };
@@ -1196,12 +1217,15 @@ async function loadAnalytics() {
 
 async function loadStats() {
   try {
-    const r = await fetch(`${API}/games?limit=1`);
+    const r = await fetch(`${API}/analytics/stats`);
     const d = await r.json();
-    document.getElementById('stat-total').textContent = d.meta?.total?.toLocaleString() || '—';
-    document.getElementById('stat-full').textContent = '10,461';
+    document.getElementById('stat-total').textContent = d.total_releases?.toLocaleString() || '—';
+    document.getElementById('stat-full').textContent = d.with_full_data?.toLocaleString() || '—';
+    const tag = document.getElementById('games-count-tag');
+    if (tag) tag.textContent = (d.total_releases?.toLocaleString() || '') + ' releases';
   } catch(e) {}
 }
+
 
 async function loadDecadeChart() {
   try {

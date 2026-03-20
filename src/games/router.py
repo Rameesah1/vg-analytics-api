@@ -40,6 +40,18 @@ def find_all(
 
 
 @router.get(
+    "/search",
+    summary="Search games by title — one result per game, not per release",
+)
+def search(
+    title: str = Query(...),
+    limit: int = Query(default=8, ge=1, le=20),
+    db: Session = Depends(get_db),
+):
+    return GamesService(db).search_by_title(title, limit)
+
+
+@router.get(
     "/{release_id}",
     summary="Get full details for a single game release",
     response_model=GameDetailSchema,
