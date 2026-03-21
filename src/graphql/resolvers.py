@@ -131,7 +131,6 @@ def _row_to_game_type(row, db: Session, include_verdict=False, include_developer
     )
 
     # only resolve nested fields if explicitly requested in the query
-    # this avoids the N+1 problem -- we only hit the DB when the client asks for it
     if include_verdict:
         agg_meta, agg_user, agg_sales = _aggregate_game_scores(db, row.game_id)
         game.verdict = _compute_verdict(agg_meta, agg_user, agg_sales)

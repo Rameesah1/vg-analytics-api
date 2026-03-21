@@ -8,7 +8,7 @@ class UsersService:
         self.db = db
 
     def find_by_username(self, username: str) -> User | None:
-        # case-sensitive match — usernames are stored as-is
+        # case-sensitive match — usernames are stored as is
         return self.db.execute(
             select(User).where(User.username == username)
         ).scalar_one_or_none()

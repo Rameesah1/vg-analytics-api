@@ -34,10 +34,10 @@ def zap_float(val) -> Optional[float]:
 
 
 def parse_vgchartz(file_path: str) -> list[VGRow]:
-    print('📂 Reading VGChartz CSV...')
+    print(' Reading VGChartz CSV...')
     df = pd.read_csv(file_path, dtype=str).fillna('')
 
-    print(f'📊 Raw VGChartz rows: {len(df)}')
+    print(f' Raw VGChartz rows: {len(df)}')
 
     rows = []
     for _, r in df.iterrows():
@@ -63,5 +63,5 @@ def parse_vgchartz(file_path: str) -> list[VGRow]:
             release_year=extract_year(r.get('release_date', '')),
         ))
 
-    print(f'✅ Parsed {len(rows)} valid VGChartz rows')
+    print(f'Parsed {len(rows)} valid VGChartz rows')
     return rows

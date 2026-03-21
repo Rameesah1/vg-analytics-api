@@ -3,8 +3,6 @@ from typing import Optional
 from uuid import UUID
 
 
-# --- query params ---
-
 class GameQuerySchema(BaseModel):
     page: int = Field(default=1, ge=1, example=1)
     limit: int = Field(default=20, ge=1, le=100, example=20)
@@ -15,9 +13,6 @@ class GameQuerySchema(BaseModel):
     year_to: Optional[int] = Field(default=None, example=2020)
     sort_by: Optional[str] = Field(default="total_sales", example="meta_score")
     order: Optional[str] = Field(default="desc", example="desc")
-
-
-# --- response bodies ---
 
 class GameResponseSchema(BaseModel):
     id: UUID

@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, Field
 from uuid import UUID
 
-# --- request bodies ---
+# request bodies
 
 class SignUpSchema(BaseModel):
     username: str = Field(..., min_length=3, example="rameesah")
@@ -14,7 +14,7 @@ class SignInSchema(BaseModel):
     password: str = Field(..., example="password123")
 
 
-# --- response bodies ---
+# response
 
 class AuthResponseSchema(BaseModel):
     access_token: str = Field(..., description="JWT — use as Bearer token in protected routes")
@@ -30,7 +30,7 @@ class UserProfileSchema(BaseModel):
     model_config = {"from_attributes": True}
 
 
-# --- internal JWT payload ---
+#internal JWT payload
 
 class JwtPayload(BaseModel):
     sub: str        # user id

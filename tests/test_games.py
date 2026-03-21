@@ -63,7 +63,7 @@ def test_game_invalid_id_404(client):
 
 
 def test_admin_create_requires_auth(client):
-    # unauthenticated POST should be rejected -- 401 or 403 both acceptable
+    # unauthenticated POST should be rejected 
     r = client.post("/api/games", json={
         "canonical_title": "Test Game",
         "normalized_title": "test game",

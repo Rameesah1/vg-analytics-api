@@ -7,7 +7,6 @@ from src.db.session import get_db
 
 async def get_context(db: Session = Depends(get_db)):
     # inject the database session into GraphQL context
-    # this is how resolvers access the DB without global state
     return {"db": db}
 
 

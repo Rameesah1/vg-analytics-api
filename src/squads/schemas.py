@@ -3,16 +3,10 @@ from typing import Optional
 from uuid import UUID
 from datetime import datetime
 
-
-# --- query params ---
-
 class SquadFilterSchema(BaseModel):
     page: int = Field(default=1, ge=1)
     limit: int = Field(default=20, ge=1, le=100)
     name: Optional[str] = Field(default=None, example="My Rockstar Squad")
-
-
-# --- request bodies ---
 
 class CreateSquadSchema(BaseModel):
     name: str = Field(..., min_length=1, max_length=50, example="Rockstar Legends")

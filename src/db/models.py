@@ -12,7 +12,7 @@ class Base(DeclarativeBase):
     pass
 
 
-# --- LOOKUP TABLES ---
+#LOOKUP TABLES 
 
 class Platform(Base):
     __tablename__ = 'platform'
@@ -65,7 +65,7 @@ class Publisher(Base):
     )
 
 
-# --- CORE DATASET TABLES ---
+# core tables
 
 class Game(Base):
     __tablename__ = 'game'
@@ -131,7 +131,7 @@ class GameRelease(Base):
     )
 
 
-# --- JOIN TABLES ---
+# join tables
 
 class GameReleaseGenre(Base):
     __tablename__ = 'game_release_genre'
@@ -178,7 +178,7 @@ class GameReleasePublisher(Base):
     )
 
 
-# --- USERS ---
+# Users
 
 class User(Base):
     __tablename__ = 'user'
@@ -200,8 +200,7 @@ class User(Base):
     )
 
 
-# --- SQUADS ---
-
+# Squads
 class Squad(Base):
     __tablename__ = 'squad'
 
@@ -239,7 +238,7 @@ class SquadItem(Base):
     )
 
 
-# --- BATTLES ---
+# Battles
 
 class Battle(Base):
     __tablename__ = 'battle'

@@ -3,7 +3,7 @@ from typing import Optional
 from uuid import UUID
 
 
-# --- query params ---
+# query params
 
 class DeveloperQuerySchema(BaseModel):
     page: int = Field(default=1, ge=1, example=1)
@@ -11,7 +11,7 @@ class DeveloperQuerySchema(BaseModel):
     name: Optional[str] = Field(default=None, example="Rockstar")
 
 
-# --- response bodies ---
+# repsonse
 
 class DeveloperResponseSchema(BaseModel):
     id: UUID

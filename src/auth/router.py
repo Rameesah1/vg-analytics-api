@@ -37,5 +37,5 @@ def login(dto: SignInSchema, db: Session = Depends(get_db)):
     responses={401: {"description": "Unauthorised"}},
 )
 def me(current_user: User = Depends(get_current_user)):
-    # never return password_hash — only expose safe fields
+    # never return password_hash - only expose safe fields
     return current_user

@@ -574,7 +574,7 @@
 
   .login-notice strong { display: block; font-family: var(--font-display); font-size: 1rem; color: var(--text); margin-bottom: 6px; }
 
-  /* ===== ASK AI ===== */
+  /* ASK AI  */
   #tab-ask { padding: 1.5rem 2rem; max-width: 1200px; }
 
   .ask-layout {
@@ -1080,7 +1080,7 @@ function logout() {
   document.getElementById('squads-content').innerHTML = `<div class="login-notice"><strong>Login to access Squads & Battles</strong>Enter your credentials in the top right to get started.</div>`;
 }
 
-// --- TABS ---
+// tabs
 function showTab(name, btn) {
   document.querySelectorAll('section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
@@ -1091,7 +1091,7 @@ function showTab(name, btn) {
   if (name === 'squads' && token) loadSquads();
 }
 
-// --- VERDICT ---
+// verdict
 function debounceSearch(val) {
   clearTimeout(searchTimer);
   if (val.length < 2) { document.getElementById('search-results').classList.remove('visible'); return; }
@@ -1126,7 +1126,7 @@ async function selectGame(id, title) {
   document.getElementById('verdict-search').value = title;
 
   // id may be a game_release_id (from analytics panels / games grid)
-  // or a game_id (from verdict search) -- resolve to game_id either way
+  // or a game_id (from verdict search) - resolve to game_id either way
   let gameId = id;
   try {
     const lookup = await fetch(`${API}/games/${id}`);
@@ -1210,7 +1210,7 @@ function syntaxHighlight(q) {
     .replace(/\b(id|includeVerdict|includeDevelopers|limit)\b(?=:)/g, '<span class="gql-arg">$1</span>');
 }
 
-// --- ANALYTICS ---
+// analytics
 async function loadAnalytics() {
   loadDecadeChart(); loadPlatformChart(); loadControversy(); loadGems(); loadStats();
 }
@@ -1324,7 +1324,7 @@ function quickVerdict(id) {
   selectGame(id, '');
 }
 
-// --- GAMES ---
+// Games
 function debounceGames() {
   clearTimeout(gamesTimer);
   gamesTimer = setTimeout(() => loadGames(), 400);
@@ -1366,7 +1366,7 @@ function goVerdict(id, title) {
   selectGame(id, title);
 }
 
-// --- SQUADS ---
+// Squads
 async function loadSquads() {
   if (!token) return;
   try {
@@ -1448,7 +1448,7 @@ async function runBattle() {
   } catch(e) { alert('Battle failed'); }
 }
 
-// --- ASK AI ---
+// ASk AI
 function autoResize(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 110) + 'px';

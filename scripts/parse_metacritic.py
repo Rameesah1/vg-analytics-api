@@ -31,7 +31,7 @@ def parse_metacritic(file_path: str) -> list[MetacriticRow]:
     print('📂 Reading Metacritic CSV...')
     df = pd.read_csv(file_path, dtype=str).fillna('')
 
-    print(f'📊 Raw Metacritic rows: {len(df)}')
+    print(f' Raw Metacritic rows: {len(df)}')
 
     rows = []
     for _, r in df.iterrows():
@@ -51,5 +51,5 @@ def parse_metacritic(file_path: str) -> list[MetacriticRow]:
             user_review=zap_float(r.get('user_review')),
         ))
 
-    print(f'✅ Parsed {len(rows)} valid Metacritic rows')
+    print(f' Parsed {len(rows)} valid Metacritic rows')
     return rows

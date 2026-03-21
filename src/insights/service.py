@@ -53,7 +53,7 @@ class AnalyticsService:
     # Leaderboard
 
     def get_leaderboard(self, query: LeaderboardQuerySchema):
-        # cache leaderboard results -- same filters always return same data
+        # cache leaderboard results - same filters always return same data
         cache_key = _make_cache_key("leaderboard",
             metric=query.metric, genre=query.genre,
             platform=query.platform, year_from=query.year_from,
@@ -399,7 +399,7 @@ class AnalyticsService:
     # Decade trends
 
     def get_decade_trends(self, query: DecadeQuerySchema):
-        # decade trends are expensive group by on 63k rows  cache aggressively
+     
         cache_key = _make_cache_key("decade", decade=query.decade, genre=query.genre)
         cached = _cache_get(cache_key)
         if cached:
