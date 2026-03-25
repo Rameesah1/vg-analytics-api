@@ -6,7 +6,7 @@ The core idea is that critic scores, player reviews and commercial sales data ea
 
 **Live API:** https://vg-analytics-api.onrender.com
 **Swagger Docs:** https://vg-analytics-api.onrender.com/api/docs
-**API Documentation PDF:** [api-docs.pdf](api-docs.pdf)
+**API Documentation PDF:** [docs/docs.pdf](docs/docs.pdf)
 **Frontend Dashboard:** served at the root URL
 
 ---
